@@ -1,23 +1,12 @@
 import React, { useState } from 'react';
-import {
-  Container,
-  TextField,
-  Button,
-  Box,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-  Grid,
-  IconButton,
-} from '@mui/material';
-import { ArrowBack, ArrowForward } from '@mui/icons-material';
+import { Container, Paper } from '@mui/material';
 import './App.css';
+import SqlInputArea from './components/SqlInputArea';
+import ExecutionPlan from './components/ExecutionPlan';
+import ResultsTable from './components/ResultsTable';
 import { fetchPlan, executeSql } from './apiService';
+import { useResizable } from 'react-resizable-layout';
+import SampleSplitter from './components/SampleSplitter';
 
 const App: React.FC = () => {
   const [sql, setSql] = useState('');
@@ -27,14 +16,11 @@ const App: React.FC = () => {
   const [maxRows, setMaxRows] = useState<number>(100);
   const [resumeIdx, setResumeIdx] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(0);
-
-  const handleSqlChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setSql(event.target.value);
-  };
-
-  const handleMaxRowsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMaxRows(Number(event.target.value));
-  };
+  const { position, isDragging, separatorProps } = useResizable({
+    axis: 'y',
+    initial: 250,
+    min: 250
+  })
 
   const handlePlan = async () => {
     try {
@@ -75,74 +61,36 @@ const App: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="md" className="App">
-      <Box className="sql-input-container">
-        <TextField
-          label="Enter SQL"
-          multiline
-          rows={10}
-          variant="outlined"
-          fullWidth
-          value={sql}
-          onChange={handleSqlChange}
-          margin="normal"
-          className="sql-textarea monospaced-textarea"
+    <Container className="container-full-width App" maxWidth={false}>
+
+      <Paper elevation={3} className="top-container" style={{ padding: '20px', marginTop: '20px', marginBottom: '20px', height: position - 80 }}>
+        <SqlInputArea
+          sql={sql}
+          setSql={setSql}
+          maxRows={maxRows}
+          setMaxRows={setMaxRows}
+          handleGo={() => handleGo(0)}
+          handlePlan={handlePlan}
         />
-        <Grid container spacing={2} alignItems="center">
-          <Grid item>
-            <Button variant="contained" color="primary" onClick={handlePlan} style={{ marginRight: '10px' }}>
-              Plan
-            </Button>
-            <Button variant="contained" color="secondary" onClick={() => handleGo()}>
-              Go
-            </Button>
-          </Grid>
-        </Grid>
-      </Box>
-      {plan && (
-        <Paper elevation={3} style={{ whiteSpace: 'pre-wrap', marginTop: '20px', padding: '10px' }}>
-          <Typography variant="h6">Execution Plan</Typography>
-          <Typography>{plan}</Typography>
-        </Paper>
-      )}
+      </Paper>
+      <SampleSplitter
+        dir={"horizontal"}
+        isDragging={isDragging}
+        {...separatorProps}
+      />
+      {plan && <ExecutionPlan plan={plan} />}
       {data.length > 0 && (
-        <Box className="table-container">
-          <TableContainer component={Paper} className="table-scroll">
-            <Table stickyHeader>
-              <TableHead>
-                <TableRow>
-                  {columns.map((column, index) => (
-                    <TableCell key={index}>{column}</TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data.map((row, rowIndex) => (
-                  <TableRow key={rowIndex}>
-                    {row.map((cell, cellIndex) => (
-                      <TableCell key={cellIndex}>{cell}</TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Box className="pagination-controls">
-            <IconButton onClick={handlePreviousPage} disabled={currentPage === 0}>
-              <ArrowBack />
-            </IconButton>
-            <TextField
-              label="Rows per page"
-              type="number"
-              value={maxRows}
-              onChange={handleMaxRowsChange}
-              inputProps={{ min: 1 }}
-            />
-            <IconButton onClick={handleNextPage}>
-              <ArrowForward />
-            </IconButton>
-          </Box>
-        </Box>
+
+        <Paper elevation={3} style={{ padding: '0px', marginBottom: '0px', height: window.innerHeight - position - 20}}>
+          <ResultsTable
+            columns={columns}
+            data={data}
+            currentPage={currentPage}
+            handlePreviousPage={handlePreviousPage}
+            handleNextPage={handleNextPage}
+            height={window.innerHeight - position - 20}
+          />
+        </Paper>
       )}
     </Container>
   );

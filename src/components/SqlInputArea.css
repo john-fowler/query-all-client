@@ -1,0 +1,62 @@
+.sql-input-container {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    /* Take up all available space */
+}
+
+.sql-textarea {
+    flex: 1;
+    resize: vertical;
+    padding: 10px;
+    border: 1px solid #ccc;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.buttons-dropdown-container {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    justify-content: space-between;
+    /* Ensure space between buttons and dropdown */
+}
+
+.buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* Add gap between buttons */
+}
+
+.button {
+    width: 150px;
+    /* Fixed width for buttons */
+}
+
+.dropdown-container {
+    margin-top: auto;
+    /* Push the dropdown to the bottom */
+}
+
+.dropdown {
+    width: 150px;
+    /* Fixed width for dropdown */
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.flex-item {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-item .MuiTextField-root {
+    flex-grow: 1;
+    align-self: stretch;
+    /* Ensure the TextField stretches to fill the height */
+}

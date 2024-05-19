@@ -1,0 +1,21 @@
+.table-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .table-scroll {
+    overflow: auto;
+    flex-grow: 1;
+  }
+  
+  .pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+  }
+  
+  .table-cell {
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+  }
