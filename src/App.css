@@ -1,3 +1,37 @@
 .monospaced-textarea .MuiInputBase-input {
   font-family: 'Courier New', Courier, monospace;
 }
+
+.App {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.sql-input-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sql-textarea {
+  flex: 1 1 auto;
+  resize: vertical;
+}
+
+.table-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-scroll {
+  overflow: auto;
+  flex-grow: 1;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
