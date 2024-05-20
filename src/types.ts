@@ -7,12 +7,14 @@ export type TableMetadata = {
     catalog: string,
     columns: ColumnMetadata[],
     indexes: IndexMetadata[],
+    primaryKey?: ColumnMetadata[],
     itemCount?: number,
 }
 
 export type ColumnMetadata = {
     name: string,
     type: ColumnTypes,
+    isHashKey?: boolean,
     nullable: boolean,
 }
 

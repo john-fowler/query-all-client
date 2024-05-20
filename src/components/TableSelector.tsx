@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography, styled } from '@mui/material';
+import { Divider, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography, styled } from '@mui/material';
 import MuiList from '@mui/material/List';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import MuiAccordionSummary, {
@@ -76,11 +76,11 @@ const List = styled(MuiList)<{ component?: React.ElementType }>({
 
 interface ColumnListItemProps {
     column: ColumnMetadata;
-    pkColumns: string[];
+    showKey: boolean;
     onClick: () => void;
 }
 
-const ColumnListItem: React.FC<ColumnListItemProps> = ({ column, pkColumns, onClick }) => {
+const ColumnListItem: React.FC<ColumnListItemProps> = ({ column, showKey, onClick }) => {
     return (
         <ListItem disablePadding
             secondaryAction={
@@ -90,7 +90,7 @@ const ColumnListItem: React.FC<ColumnListItemProps> = ({ column, pkColumns, onCl
         }
         onClick={onClick}
         >
-            { pkColumns.includes(column.name) ? 
+            { showKey ? 
                 <ListItemIcon>
                     <KeyIcon />
                 </ListItemIcon>
@@ -177,14 +177,23 @@ const TableSelector: React.FC<TableSelectorProps> = () => {
                             {
                                 table.columns.length > 0 ? 
                                 <List>
-                                    {table.columns.map((column) =>
-                                        <ColumnListItem
-                                            key={column.name} 
-                                            column={column}
-                                            pkColumns={pkColumns}
-                                            onClick={() => handleTokenClick(column.name)}
-                                        />
-                                    )}
+                                {table.primaryKey && table.primaryKey.map((column) =>
+                                    <ColumnListItem
+                                        key={column.name} 
+                                        column={column}
+                                        showKey={true}
+                                        onClick={() => handleTokenClick(column.name)}
+                                    />
+                                )}
+                                <Divider />
+                                {table.columns.map((column) =>
+                                    <ColumnListItem
+                                        key={column.name} 
+                                        column={column}
+                                        showKey={column.isHashKey ?? false}
+                                        onClick={() => handleTokenClick(column.name)}
+                                    />
+                                )}
                                 </List>
                                  :
                                 <Typography>
