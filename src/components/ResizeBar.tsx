@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import './SampleSplitter.css';
+import './ResizeBar.css';
 
 export const cn = (...args: any[]) => args.filter(Boolean).join(" ");
 
-const SampleSplitter = ({
+const ResizeBar = ({
   id = 'drag-bar',
   dir,
   isDragging,
@@ -28,4 +28,4 @@ const SampleSplitter = ({
   )
 }
 
-export default SampleSplitter
+export default ResizeBar

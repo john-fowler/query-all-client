@@ -24,36 +24,38 @@ interface ResultsTableProps {
 
 const ResultsTable: React.FC<ResultsTableProps> = ({ columns, data, currentPage, height, handlePreviousPage, handleNextPage }) => {
   return (
-    <Box className="table-container" style={{ height: height }}>
-      <TableContainer component={Paper} className="table-scroll">
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              {columns.map((column, index) => (
-                <TableCell key={index} className="table-cell">{column}</TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.map((row, rowIndex) => (
-              <TableRow key={rowIndex}>
-                {row.map((cell, cellIndex) => (
-                  <TableCell key={cellIndex} className="table-cell">{cell}</TableCell>
+    <Paper elevation={3} style={{ padding: '0px', marginBottom: '0px' }}>
+      <Box className="table-container" style={{ height: height }}>
+        <TableContainer component={Paper} className="table-scroll">
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow>
+                {columns.map((column, index) => (
+                  <TableCell key={index} className="table-cell">{column}</TableCell>
                 ))}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Box className="pagination-controls">
-        <IconButton onClick={handlePreviousPage} disabled={currentPage === 0}>
-          <ArrowBack />
-        </IconButton>
-        <IconButton onClick={handleNextPage}>
-          <ArrowForward />
-        </IconButton>
+            </TableHead>
+            <TableBody>
+              {data.map((row, rowIndex) => (
+                <TableRow key={rowIndex}>
+                  {row.map((cell, cellIndex) => (
+                    <TableCell key={cellIndex} className="table-cell">{cell}</TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Box className="pagination-controls">
+          <IconButton onClick={handlePreviousPage} disabled={currentPage === 0}>
+            <ArrowBack />
+          </IconButton>
+          <IconButton onClick={handleNextPage}>
+            <ArrowForward />
+          </IconButton>
+        </Box>
       </Box>
-    </Box>
+    </Paper>
   );
 };
 

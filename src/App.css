@@ -8,35 +8,6 @@ body,
   display: flex;
   flex-direction: column;
   height: 100%;
-}
-
-.container-full-width {
+  margin: 20px;
   width: 100%;
-  /* Adjust for desired margins */
-  margin: 20 20;
-  height: 100%;
-}
-
-.top-container {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.table-container {
-  display: flex;
-  flex-direction: column;
-  
-  flex: 1;
-}
-
-.table-scroll {
-  overflow: auto;
-  flex-grow: 1;
-}
-
-.pagination-controls {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
 }

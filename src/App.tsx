@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from './redux/store';
-import { Container, Paper } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import './App.css';
 import SqlInputArea from './components/SqlInputArea';
 import ExecutionPlan from './components/ExecutionPlan';
 import ResultsTable from './components/ResultsTable';
 import { fetchPlan, executeSql } from './apiService';
 import { useResizable } from 'react-resizable-layout';
-import SampleSplitter from './components/SampleSplitter';
+import ResizeBar from './components/ResizeBar';
 import { setPlan, setColumns, setData, setResumeIdx, setCurrentPage } from './redux/sqlSlice';
 
 const App: React.FC = () => {
@@ -72,33 +72,33 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <Container className="container-full-width App" maxWidth={false}>
+    <Container className="App" maxWidth={false}>
 
-      <Paper elevation={3} className="top-container" style={{ padding: '20px', marginTop: '20px', marginBottom: '20px', height: position - 80 }}>
+      <Box display="flex" sx={{ margin: '20px 0px', height: position - 40 }}>
         <SqlInputArea
           handleGo={() => handleGo(0)}
           handlePlan={handlePlan}
         />
-      </Paper>
-      <SampleSplitter
+      </Box>
+      <ResizeBar
         dir={"horizontal"}
         isDragging={isDragging}
         {...separatorProps}
       />
-      {plan && <ExecutionPlan plan={plan} />}
-      {data.length > 0 && (
+      <Box sx={{ padding: '0px', margin: '0px', height: windowHeight - position - 60}}>
+        {plan && <ExecutionPlan plan={plan} />}
+        {data.length > 0 && (
 
-        <Paper elevation={3} style={{ padding: '0px', marginBottom: '0px', height: windowHeight - position - 20}}>
-          <ResultsTable
-            columns={columns}
-            data={data}
-            currentPage={currentPage}
-            handlePreviousPage={handlePreviousPage}
-            handleNextPage={handleNextPage}
-            height={window.innerHeight - position - 20}
-          />
-        </Paper>
-      )}
+            <ResultsTable
+              columns={columns}
+              data={data}
+              currentPage={currentPage}
+              handlePreviousPage={handlePreviousPage}
+              handleNextPage={handleNextPage}
+              height={window.innerHeight - position - 20}
+            />
+        )}
+      </Box>
     </Container>
   );
 };

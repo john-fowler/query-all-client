@@ -7,9 +7,9 @@ interface ExecutionPlanProps {
 
 const ExecutionPlan: React.FC<ExecutionPlanProps> = ({ plan }) => {
   return (
-    <Paper elevation={3} style={{ whiteSpace: 'pre-wrap', marginTop: '20px', padding: '10px' }}>
+    <Paper elevation={3} style={{ padding: '10px' }}>
       <Typography variant="h6">Execution Plan</Typography>
-      <Typography>{plan}</Typography>
+      <Typography style={{ whiteSpace: 'pre-wrap', fontFamily: `'Courier New', Courier, monospace` }}>{plan}</Typography>
     </Paper>
   );
 };
