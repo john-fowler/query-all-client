@@ -12,6 +12,7 @@ interface SqlState {
   resumeIdx: number;
   currentPage: number;
   tables: TableMetadata[];
+  tableFilter: string;
 }
 
 const initialState: SqlState = {
@@ -25,6 +26,7 @@ const initialState: SqlState = {
   resumeIdx: 0,
   currentPage: 0,
   tables: [],
+  tableFilter: '',
 };
 
 const sqlSlice = createSlice({
@@ -67,9 +69,12 @@ const sqlSlice = createSlice({
         state.tables[index] = action.payload;
       }
     },
+    setTableFilter: (state, action: PayloadAction<string>) => {
+      state.tableFilter = action.payload;
+    }
   },
 });
 
-export const { setSql, setPlan, setColumns, setData, setPlanTime, setExecTime, setMaxRows, setResumeIdx, setCurrentPage, setTables, updateTable } = sqlSlice.actions;
+export const { setSql, setPlan, setColumns, setData, setPlanTime, setExecTime, setMaxRows, setResumeIdx, setCurrentPage, setTables, updateTable, setTableFilter } = sqlSlice.actions;
 
 export default sqlSlice.reducer;

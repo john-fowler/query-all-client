@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, styled } from '@mui/material';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
@@ -56,8 +56,12 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 const TableSelector: React.FC<TableSelectorProps> = () => {
     const dispatch = useDispatch<AppDispatch>();
     const [expanded, setExpanded] = React.useState<string | false>('~~~');
-    const { tables } = useSelector((state: RootState) => state.sql);
+    const { tables, tableFilter } = useSelector((state: RootState) => state.sql);
     const [ pkColumns, setPkColumns ] = React.useState<string[]>([]);
+
+    const tablesToDisplay = useMemo(() => {
+        return tables.filter((table) => table.name.toLowerCase().includes(tableFilter.toLowerCase()));
+    }, [tables, tableFilter]);
 
     useEffect(() => {
         try {
@@ -96,7 +100,7 @@ const TableSelector: React.FC<TableSelectorProps> = () => {
   return (
     <div>
         {
-            tables.map((table) => {
+            tablesToDisplay.map((table) => {
                 return (
                     <Accordion expanded={expanded === table.name} onChange={handleChange(table.name)}>
                         <AccordionSummary aria-controls={table.name + "d-content"} id={table.name + "d-header"}>
@@ -108,10 +112,10 @@ const TableSelector: React.FC<TableSelectorProps> = () => {
                                 <List>
                                     {table.columns.map((column) =>
                                             <ListItem disablePadding
-                                            secondaryAction={
-                                              <IconButton edge="end" aria-label="fill">
-                                                <ArrowRightIcon />
-                                              </IconButton>
+                                                secondaryAction={
+                                                <IconButton edge="end" aria-label="fill">
+                                                    <ArrowRightIcon />
+                                                </IconButton>
                                             }>
                                                 { pkColumns.includes(column.name) ? 
                                                     <ListItemIcon>
@@ -125,7 +129,7 @@ const TableSelector: React.FC<TableSelectorProps> = () => {
                                                 </ListItemButton>
                                             </ListItem>
                                     )}
-                                        </List>
+                                </List>
                                  :
                                 <Typography>
                                     Loading...

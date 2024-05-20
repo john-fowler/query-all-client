@@ -58,7 +58,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ columns, data, currentPage,
     <Paper elevation={3} style={{ padding: '0px', marginBottom: '0px' }}>
       <Box className="table-container" style={{ height: height }}>
         <TableContainer component={Paper} className="table-scroll">
-          <Table stickyHeader>
+          <Table stickyHeader size='small'>
             <TableHead>
               <TableRow>
                 {columns.map((column, index) => (
