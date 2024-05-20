@@ -10,17 +10,18 @@ import { fetchPlan, executeSql } from './apiService';
 import { useResizable } from 'react-resizable-layout';
 import ResizeBar from './components/ResizeBar';
 import { setResumeIdx } from './redux/sqlSlice';
-import { setPlan, setColumns, setData, setPlanTime, setExecTime, setCurrentPage } from './redux/resultsSlice';
+import { setError, setPlan, setColumns, setData, setPlanTime, setExecTime, setCurrentPage } from './redux/resultsSlice';
 import CssBaseline from '@mui/material/CssBaseline';
 import DrawerHeader from './components/DrawerHeader';
 import Main from './components/Main';
 import TopNavBar from './components/TopNavBar';
 import LeftSideDrawer, { drawerWidth } from './components/LeftSideDrawer';
+import ErrorPane from './components/ErrorPane';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { sql, maxRows, resumeIdx } = useSelector((state: RootState) => state.sql);
-  const { plan, columns, data, planTime, execTime, currentPage } = useSelector((state: RootState) => state.results);
+  const { error, plan, columns, data, planTime, execTime, currentPage } = useSelector((state: RootState) => state.results);
   const [windowHeight, setWindowHeight] = useState<number>(window.innerHeight);
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
   const [open, setOpen] = React.useState(false);
@@ -38,33 +39,52 @@ const App: React.FC = () => {
     setOpen(false);
   }, []);
 
+  const handleError = useCallback(async (err: string) => {
+    dispatch(setColumns([]));
+    dispatch(setData([]));
+    dispatch(setPlan(''));
+    dispatch(setError(err));
+  }, [dispatch]);
+
   const handlePlan = useCallback(async () => {
     try {
       dispatch(setColumns([]));
       dispatch(setData([]));
+      dispatch(setError(''));
       const result = await fetchPlan(sql);
-      dispatch(setPlan(result.plan));
+      if (result.error) {
+        handleError(result.error);
+      }
+      else {
+        dispatch(setPlan(result.plan));
+      }
     } catch (error: Error | any) {
       console.error('Error fetching plan:', error);
       alert('Error fetching plan: ' + error.message);
     }
-  }, [dispatch, sql]);
+  }, [dispatch, handleError, sql]);
 
   const handleGo = useCallback(async (resumeIdx: number = 0) => {
     try {
       dispatch(setPlan(''));
+      dispatch(setError(''));
       const result = await executeSql(sql, maxRows, resumeIdx);
-      dispatch(setColumns(result.columns));
-      dispatch(setData(result.data));
-      dispatch(setPlanTime(result.planTime));
-      dispatch(setExecTime(result.execTime));
-      dispatch(setResumeIdx(resumeIdx + result.data.length));
-      dispatch(setCurrentPage(resumeIdx / maxRows));
+      if (result.error) {
+        handleError(result.error);
+      }
+      else {
+        dispatch(setColumns(result.columns));
+        dispatch(setData(result.data));
+        dispatch(setPlanTime(result.planTime));
+        dispatch(setExecTime(result.execTime));
+        dispatch(setResumeIdx(resumeIdx + result.data.length));
+        dispatch(setCurrentPage(resumeIdx / maxRows));
+      }
     } catch (error: Error | any) {
       console.error('Error executing SQL:', error);
       alert('Error executing SQL: ' + error.message);
     }
-  }, [dispatch, sql, maxRows]);
+  }, [dispatch, sql, maxRows, handleError]);
 
   const handleNextPage = useCallback(() => {
     handleGo(resumeIdx);
@@ -112,6 +132,7 @@ const App: React.FC = () => {
             {...separatorProps}
           />
           <Box sx={{ padding: '0px', margin: '0px', height: windowHeight - position - 80, maxWidth: windowWidth - (open ? drawerWidth : 0) - 100}}>
+            {error && <ErrorPane error={error} />}
             {plan && <ExecutionPlan plan={plan} />}
             {data.length > 0 && (
                 <ResultsTable
