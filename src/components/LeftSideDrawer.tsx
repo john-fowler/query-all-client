@@ -1,8 +1,11 @@
 import React, {  } from 'react';
 import { Divider, Drawer, IconButton, useTheme } from '@mui/material';
-import DrawerHeader, { drawerWidth } from './DrawerHeader';
+import DrawerHeader from './DrawerHeader';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import TableSelector from './TableSelector';
+
+export const drawerWidth = 400;
 
 interface LeftSideDrawerProps {
     handleDrawerClose: () => void;
@@ -31,6 +34,7 @@ const LeftSideDrawer: React.FC<LeftSideDrawerProps> = ({ open, handleDrawerClose
         </IconButton>
       </DrawerHeader>
       <Divider />
+      <TableSelector />
     </Drawer>
   );
 };

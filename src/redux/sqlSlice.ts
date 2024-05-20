@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { TableMetadata } from '../types';
 
 interface SqlState {
   sql: string;
@@ -10,6 +11,7 @@ interface SqlState {
   maxRows: number;
   resumeIdx: number;
   currentPage: number;
+  tables: TableMetadata[];
 }
 
 const initialState: SqlState = {
@@ -22,6 +24,7 @@ const initialState: SqlState = {
   maxRows: 100,
   resumeIdx: 0,
   currentPage: 0,
+  tables: [],
 };
 
 const sqlSlice = createSlice({
@@ -55,9 +58,18 @@ const sqlSlice = createSlice({
     setCurrentPage: (state, action: PayloadAction<number>) => {
       state.currentPage = action.payload;
     },
+    setTables: (state, action: PayloadAction<TableMetadata[]>) => {
+      state.tables = action.payload;
+    },
+    updateTable: (state, action: PayloadAction<TableMetadata>) => {
+      const index = state.tables.findIndex(t => t.name === action.payload.name);
+      if (index !== -1) {
+        state.tables[index] = action.payload;
+      }
+    },
   },
 });
 
-export const { setSql, setPlan, setColumns, setData, setPlanTime, setExecTime, setMaxRows, setResumeIdx, setCurrentPage } = sqlSlice.actions;
+export const { setSql, setPlan, setColumns, setData, setPlanTime, setExecTime, setMaxRows, setResumeIdx, setCurrentPage, setTables, updateTable } = sqlSlice.actions;
 
 export default sqlSlice.reducer;
