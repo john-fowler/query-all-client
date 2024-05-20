@@ -120,7 +120,7 @@ const App: React.FC = () => {
       <Main open={open}>
         <DrawerHeader /> {/* This is to offset the size of the header */}
 
-          <Box display="flex" sx={{ marginBottom: '20px', height: position - 130 }}>
+          <Box display="flex" sx={{ marginBottom: '10px', height: position - 125 }}>
             <SqlInputArea
               handleGo={() => handleGo(0)}
               handlePlan={handlePlan}
@@ -131,7 +131,7 @@ const App: React.FC = () => {
             isDragging={isDragging}
             {...separatorProps}
           />
-          <Box sx={{ padding: '0px', margin: '0px', height: windowHeight - position - 80, maxWidth: windowWidth - (open ? drawerWidth : 0) - 100}}>
+          <Box sx={{ padding: '0px', margin: '0px', height: windowHeight - position - 90, maxWidth: windowWidth - (open ? drawerWidth : 0) - 100}}>
             {error && <ErrorPane error={error} />}
             {plan && <ExecutionPlan plan={plan} />}
             {data.length > 0 && (
