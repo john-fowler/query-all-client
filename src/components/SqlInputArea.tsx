@@ -10,6 +10,7 @@ import {
   Select,
   SelectChangeEvent,
   TextField,
+  useTheme,
 } from "@mui/material";
 import { setSql, setSelection, setMaxRows } from "../redux/sqlSlice";
 import "./SqlInputArea.css";
@@ -24,6 +25,7 @@ const SqlInputArea: React.FC<SqlInputAreaProps> = ({
   handlePlan,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const theme = useTheme();
   const inputRef = React.useRef(null);
   const { sql, maxRows } = useSelector((state: RootState) => state.sql);
 
@@ -64,9 +66,9 @@ const SqlInputArea: React.FC<SqlInputAreaProps> = ({
 
   return (
     <Box className="sql-input-container">
-      <Box className="flex-item">
+      <Box className="flex-item" sx={{ border: 1, borderColor: theme.palette.divider }}>
         <TextField
-          variant="outlined"
+          variant="standard"
           multiline
           fullWidth
           placeholder="SELECT * FROM ..."
@@ -77,11 +79,16 @@ const SqlInputArea: React.FC<SqlInputAreaProps> = ({
           onKeyUp={updateSelectionRange}
           inputRef={inputRef}
           InputProps={{
+            disableUnderline: true,
             style: {
               height: "100%",
+              padding: "10px",
               alignItems: "flex-start",
               fontFamily: "Courier New, Courier, monospace", // Apply monospace font directly
             },
+          }}
+          style={{
+            overflow: "auto",
           }}
           className="sql-textarea"
         />
