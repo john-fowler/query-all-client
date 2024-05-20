@@ -10,10 +10,11 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import { getTableDetails, listTables } from '../apiService';
 import { AppDispatch, RootState } from '../redux/store';
-import { setTables, updateTable } from '../redux/sqlSlice';
+import { setTables, updateTable } from '../redux/catalogSlice';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import KeyIcon from '@mui/icons-material/Key';
 import { HashKeyAndSortIndexMetadata, IndexMetadata, PK_INDEX_NAME } from '../types';
+import { insertSqlToken } from '../redux/sqlSlice';
 
 interface TableSelectorProps {
 }
@@ -77,7 +78,7 @@ const List = styled(MuiList)<{ component?: React.ElementType }>({
 const TableSelector: React.FC<TableSelectorProps> = () => {
     const dispatch = useDispatch<AppDispatch>();
     const [expanded, setExpanded] = React.useState<string | false>('~~~');
-    const { tables, tableFilter } = useSelector((state: RootState) => state.sql);
+    const { tables, tableFilter } = useSelector((state: RootState) => state.catalog);
     const [ pkColumns, setPkColumns ] = React.useState<string[]>([]);
 
     const tablesToDisplay = useMemo(() => {
@@ -119,13 +120,8 @@ const TableSelector: React.FC<TableSelectorProps> = () => {
         setExpanded(newExpanded ? panel : false);
       };
 
-      const handleTableFillClick = (table: string) => {
-        //setExpanded(table);
-        console.log(table);
-    }
-
-    const handleColumnFillClick = (column: string) => {
-        console.log(column);
+      const handleTokenClick = (token: string) => {
+        dispatch(insertSqlToken({token}));
     }
   return (
     <div>
@@ -138,7 +134,7 @@ const TableSelector: React.FC<TableSelectorProps> = () => {
                                 <Typography>{table.name}</Typography>
                                 <IconButton edge="end" aria-label="fill" onClick={(event: React.MouseEvent) => {
                                     event.stopPropagation();
-                                    handleTableFillClick(table.name);
+                                    handleTokenClick(table.name);
                                 }}>
                                     <ArrowRightIcon />
                                 </IconButton>
@@ -158,7 +154,7 @@ const TableSelector: React.FC<TableSelectorProps> = () => {
                                             }
                                             onClick={(event: React.MouseEvent) => {
                                                 event.stopPropagation();
-                                                handleColumnFillClick(column.name);
+                                                handleTokenClick(column.name);
                                             }}
                                             >
                                                 { pkColumns.includes(column.name) ? 

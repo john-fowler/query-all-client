@@ -1,9 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import sqlReducer from './sqlSlice';
+import resultsReducer from './resultsSlice';
+import catalogReducer from './catalogSlice';
 
 const store = configureStore({
   reducer: {
     sql: sqlReducer,
+    results: resultsReducer,
+    catalog: catalogReducer,
   },
 });
 

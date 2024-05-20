@@ -10,7 +10,7 @@ import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import { setTableFilter } from '../redux/sqlSlice';
+import { setTableFilter } from '../redux/catalogSlice';
 export const drawerWidth = 340;
 
 interface LeftSideDrawerProps {
@@ -20,7 +20,7 @@ interface LeftSideDrawerProps {
 
 const LeftSideDrawer: React.FC<LeftSideDrawerProps> = ({ open, handleDrawerClose }) => {
     const dispatch = useDispatch<AppDispatch>();
-    const { tableFilter } = useSelector((state: RootState) => state.sql);
+    const { tableFilter } = useSelector((state: RootState) => state.catalog);
     const theme = useTheme();
 
     const setFilter = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {

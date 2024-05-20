@@ -1,32 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TableMetadata } from '../types';
 
 interface SqlState {
   sql: string;
-  plan: string;
-  columns: string[];
-  data: any[][];
-  planTime: number;
-  execTime: number;
   maxRows: number;
   resumeIdx: number;
-  currentPage: number;
-  tables: TableMetadata[];
-  tableFilter: string;
+  selectionStart: number;
+  selectionEnd: number;
 }
 
 const initialState: SqlState = {
   sql: '',
-  plan: '',
-  columns: [],
-  data: [],
-  planTime: 0,
-  execTime: 0,
   maxRows: 100,
   resumeIdx: 0,
-  currentPage: 0,
-  tables: [],
-  tableFilter: '',
+  selectionStart: 0,
+  selectionEnd: 0,
 };
 
 const sqlSlice = createSlice({
@@ -36,45 +23,29 @@ const sqlSlice = createSlice({
     setSql: (state, action: PayloadAction<string>) => {
       state.sql = action.payload;
     },
-    setPlan: (state, action: PayloadAction<string>) => {
-      state.plan = action.payload;
-    },
-    setColumns: (state, action: PayloadAction<string[]>) => {
-      state.columns = action.payload;
-    },
-    setData: (state, action: PayloadAction<any[][]>) => {
-      state.data = action.payload;
-    },
-    setPlanTime: (state, action: PayloadAction<number>) => {
-      state.planTime = action.payload;
-    },
-    setExecTime: (state, action: PayloadAction<number>) => {
-      state.execTime = action.payload;
-    },
     setMaxRows: (state, action: PayloadAction<number>) => {
       state.maxRows = action.payload;
     },
     setResumeIdx: (state, action: PayloadAction<number>) => {
       state.resumeIdx = action.payload;
     },
-    setCurrentPage: (state, action: PayloadAction<number>) => {
-      state.currentPage = action.payload;
+    setSelection: (state, action: PayloadAction<{ selectionStart: number; selectionEnd: number }>) => {
+      state.selectionStart = action.payload.selectionStart;
+      state.selectionEnd = action.payload.selectionEnd;
     },
-    setTables: (state, action: PayloadAction<TableMetadata[]>) => {
-      state.tables = action.payload;
+    insertSqlToken: (state, action: PayloadAction<{ token: string }>) => {
+      const { token } = action.payload;
+      const priorChar = state.sql[state.selectionStart - 1];
+      const priorIsLetter = priorChar && priorChar.match(/[a-z0-9]/i);
+      state.sql = state.sql.slice(0, state.selectionStart) + (priorIsLetter ? ', ' : '') + token + state.sql.slice(state.selectionEnd);
+      localStorage.setItem("sql", state.sql); // Save to local storage
+      // Update selection to reflect new position
+      state.selectionStart += token.length + (priorIsLetter ? 2 : 0);
+      state.selectionEnd = state.selectionStart;
     },
-    updateTable: (state, action: PayloadAction<TableMetadata>) => {
-      const index = state.tables.findIndex(t => t.name === action.payload.name);
-      if (index !== -1) {
-        state.tables[index] = action.payload;
-      }
-    },
-    setTableFilter: (state, action: PayloadAction<string>) => {
-      state.tableFilter = action.payload;
-    }
   },
 });
 
-export const { setSql, setPlan, setColumns, setData, setPlanTime, setExecTime, setMaxRows, setResumeIdx, setCurrentPage, setTables, updateTable, setTableFilter } = sqlSlice.actions;
+export const { setSql, setMaxRows, setResumeIdx, setSelection, insertSqlToken } = sqlSlice.actions;
 
 export default sqlSlice.reducer;

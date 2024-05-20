@@ -11,7 +11,7 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import { setSql, setMaxRows } from "../redux/sqlSlice";
+import { setSql, setSelection, setMaxRows } from "../redux/sqlSlice";
 import "./SqlInputArea.css";
 
 interface SqlInputAreaProps {
@@ -24,14 +24,28 @@ const SqlInputArea: React.FC<SqlInputAreaProps> = ({
   handlePlan,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const inputRef = React.useRef(null);
   const { sql, maxRows } = useSelector((state: RootState) => state.sql);
+
+  const updateSelectionRange = useCallback(
+    () => {
+      if (inputRef.current !== null) {
+        const selectionStart = (inputRef.current as HTMLInputElement).selectionStart ?? 0;
+        const selectionEnd = (inputRef.current as HTMLInputElement).selectionEnd ?? 0;
+        dispatch(setSelection({ selectionStart, selectionEnd }));
+      }
+    },
+    [dispatch]
+  );
+
   const handleSqlChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
       const newSql = event.target.value;
       dispatch(setSql(newSql));
       localStorage.setItem("sql", newSql); // Save to local storage
+      updateSelectionRange();
     },
-    [dispatch]
+    [dispatch, updateSelectionRange]
   );
 
   const handleMaxRowsChange = useCallback(
@@ -58,6 +72,10 @@ const SqlInputArea: React.FC<SqlInputAreaProps> = ({
           placeholder="SELECT * FROM ..."
           value={sql}
           onChange={handleSqlChange}
+          onClick={updateSelectionRange}
+          onFocus={updateSelectionRange}
+          onKeyUp={updateSelectionRange}
+          inputRef={inputRef}
           InputProps={{
             style: {
               height: "100%",

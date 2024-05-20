@@ -9,7 +9,8 @@ import ResultsTable from './components/ResultsTable';
 import { fetchPlan, executeSql } from './apiService';
 import { useResizable } from 'react-resizable-layout';
 import ResizeBar from './components/ResizeBar';
-import { setPlan, setColumns, setData, setPlanTime, setExecTime, setResumeIdx, setCurrentPage } from './redux/sqlSlice';
+import { setResumeIdx } from './redux/sqlSlice';
+import { setPlan, setColumns, setData, setPlanTime, setExecTime, setCurrentPage } from './redux/resultsSlice';
 import CssBaseline from '@mui/material/CssBaseline';
 import DrawerHeader from './components/DrawerHeader';
 import Main from './components/Main';
@@ -18,7 +19,8 @@ import LeftSideDrawer, { drawerWidth } from './components/LeftSideDrawer';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { sql, plan, columns, data, planTime, execTime, maxRows, resumeIdx, currentPage } = useSelector((state: RootState) => state.sql);
+  const { sql, maxRows, resumeIdx } = useSelector((state: RootState) => state.sql);
+  const { plan, columns, data, planTime, execTime, currentPage } = useSelector((state: RootState) => state.results);
   const [windowHeight, setWindowHeight] = useState<number>(window.innerHeight);
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
   const [open, setOpen] = React.useState(false);
