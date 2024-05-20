@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, styled } from '@mui/material';
+import { IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography, styled } from '@mui/material';
+import MuiList from '@mui/material/List';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import MuiAccordionSummary, {
   AccordionSummaryProps,
@@ -53,6 +54,26 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   borderTop: '1px solid rgba(0, 0, 0, .125)',
 }));
 
+
+
+const List = styled(MuiList)<{ component?: React.ElementType }>({
+    '& .MuiListItemButton-root': {
+        marginLeft: 0,
+        paddingLeft: 0,
+        paddingRight: 36,
+    },
+    '& .MuiListItemIcon-root': {
+        minWidth: 48,
+    },
+    '& .MuiSvgIcon-root': {
+        fontSize: 20,
+    },
+    '& .MuiListItemText-primary': {
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+    },
+});
+
 const TableSelector: React.FC<TableSelectorProps> = () => {
     const dispatch = useDispatch<AppDispatch>();
     const [expanded, setExpanded] = React.useState<string | false>('~~~');
@@ -97,26 +118,49 @@ const TableSelector: React.FC<TableSelectorProps> = () => {
       (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
         setExpanded(newExpanded ? panel : false);
       };
+
+      const handleTableFillClick = (table: string) => {
+        //setExpanded(table);
+        console.log(table);
+    }
+
+    const handleColumnFillClick = (column: string) => {
+        console.log(column);
+    }
   return (
     <div>
         {
             tablesToDisplay.map((table) => {
                 return (
-                    <Accordion expanded={expanded === table.name} onChange={handleChange(table.name)}>
+                    <Accordion key={table.name} expanded={expanded === table.name} onChange={handleChange(table.name)}>
                         <AccordionSummary aria-controls={table.name + "d-content"} id={table.name + "d-header"}>
-                            <Typography>{table.name}</Typography>
+                            <Stack direction='row' alignItems='center' justifyContent='space-between' flex={1} sx={{ paddingRight: '12px' }}>
+                                <Typography>{table.name}</Typography>
+                                <IconButton edge="end" aria-label="fill" onClick={(event: React.MouseEvent) => {
+                                    event.stopPropagation();
+                                    handleTableFillClick(table.name);
+                                }}>
+                                    <ArrowRightIcon />
+                                </IconButton>
+
+                            </Stack>
                         </AccordionSummary>
                         <AccordionDetails>
                             {
                                 table.columns.length > 0 ? 
                                 <List>
                                     {table.columns.map((column) =>
-                                            <ListItem disablePadding
+                                            <ListItem key={column.name} disablePadding
                                                 secondaryAction={
                                                 <IconButton edge="end" aria-label="fill">
                                                     <ArrowRightIcon />
                                                 </IconButton>
-                                            }>
+                                            }
+                                            onClick={(event: React.MouseEvent) => {
+                                                event.stopPropagation();
+                                                handleColumnFillClick(column.name);
+                                            }}
+                                            >
                                                 { pkColumns.includes(column.name) ? 
                                                     <ListItemIcon>
                                                         <KeyIcon />

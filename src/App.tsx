@@ -11,16 +11,16 @@ import { useResizable } from 'react-resizable-layout';
 import ResizeBar from './components/ResizeBar';
 import { setPlan, setColumns, setData, setPlanTime, setExecTime, setResumeIdx, setCurrentPage } from './redux/sqlSlice';
 import CssBaseline from '@mui/material/CssBaseline';
-import AppBar from './components/AppBar';
 import DrawerHeader from './components/DrawerHeader';
 import Main from './components/Main';
 import TopNavBar from './components/TopNavBar';
-import LeftSideDrawer from './components/LeftSideDrawer';
+import LeftSideDrawer, { drawerWidth } from './components/LeftSideDrawer';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { sql, plan, columns, data, planTime, execTime, maxRows, resumeIdx, currentPage } = useSelector((state: RootState) => state.sql);
   const [windowHeight, setWindowHeight] = useState<number>(window.innerHeight);
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
   const [open, setOpen] = React.useState(false);
   const { position, isDragging, separatorProps } = useResizable({
     axis: 'y',
@@ -79,6 +79,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const handleResize = () => {
       setWindowHeight(window.innerHeight);
+      setWindowWidth(window.innerWidth);
     };
 
     window.addEventListener('resize', handleResize);
@@ -92,9 +93,7 @@ const App: React.FC = () => {
     <Container className="App" maxWidth={false}>
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
         <TopNavBar open={open} handleDrawerOpen={handleDrawerOpen} />
-      </AppBar>
       <LeftSideDrawer open={open} handleDrawerClose={handleDrawerClose} />
       <Main open={open}>
         <DrawerHeader /> {/* This is to offset the size of the header */}
@@ -110,7 +109,7 @@ const App: React.FC = () => {
             isDragging={isDragging}
             {...separatorProps}
           />
-          <Box sx={{ padding: '0px', margin: '0px', height: windowHeight - position - 80}}>
+          <Box sx={{ padding: '0px', margin: '0px', height: windowHeight - position - 80, maxWidth: windowWidth - (open ? drawerWidth : 0) - 100}}>
             {plan && <ExecutionPlan plan={plan} />}
             {data.length > 0 && (
                 <ResultsTable

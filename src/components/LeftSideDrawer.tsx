@@ -11,7 +11,7 @@ import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { setTableFilter } from '../redux/sqlSlice';
-export const drawerWidth = 400;
+export const drawerWidth = 340;
 
 interface LeftSideDrawerProps {
     handleDrawerClose: () => void;
