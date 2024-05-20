@@ -9,7 +9,7 @@ import ResultsTable from './components/ResultsTable';
 import { fetchPlan, executeSql } from './apiService';
 import { useResizable } from 'react-resizable-layout';
 import ResizeBar from './components/ResizeBar';
-import { setPlan, setColumns, setData, setResumeIdx, setCurrentPage } from './redux/sqlSlice';
+import { setPlan, setColumns, setData, setPlanTime, setExecTime, setResumeIdx, setCurrentPage } from './redux/sqlSlice';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from './components/AppBar';
 import DrawerHeader from './components/DrawerHeader';
@@ -19,7 +19,7 @@ import LeftSideDrawer from './components/LeftSideDrawer';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { sql, plan, columns, data, maxRows, resumeIdx, currentPage } = useSelector((state: RootState) => state.sql);
+  const { sql, plan, columns, data, planTime, execTime, maxRows, resumeIdx, currentPage } = useSelector((state: RootState) => state.sql);
   const [windowHeight, setWindowHeight] = useState<number>(window.innerHeight);
   const [open, setOpen] = React.useState(false);
   const { position, isDragging, separatorProps } = useResizable({
@@ -54,6 +54,8 @@ const App: React.FC = () => {
       const result = await executeSql(sql, maxRows, resumeIdx);
       dispatch(setColumns(result.columns));
       dispatch(setData(result.data));
+      dispatch(setPlanTime(result.planTime));
+      dispatch(setExecTime(result.execTime));
       dispatch(setResumeIdx(resumeIdx + result.data.length));
       dispatch(setCurrentPage(resumeIdx / maxRows));
     } catch (error: Error | any) {
@@ -114,6 +116,8 @@ const App: React.FC = () => {
                 <ResultsTable
                   columns={columns}
                   data={data}
+                  planTime={planTime}
+                  execTime={execTime}
                   currentPage={currentPage}
                   handlePreviousPage={handlePreviousPage}
                   handleNextPage={handleNextPage}

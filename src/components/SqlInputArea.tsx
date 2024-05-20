@@ -72,14 +72,14 @@ const SqlInputArea: React.FC<SqlInputAreaProps> = ({
         <Box className="buttons-container">
           <Button
             variant="contained"
-            color="secondary"
+            color="primary"
             onClick={handleGo}
             className="button"
           >
             Go
           </Button>
           <Button
-            variant="contained"
+            variant="outlined"
             color="primary"
             onClick={handlePlan}
             className="button"

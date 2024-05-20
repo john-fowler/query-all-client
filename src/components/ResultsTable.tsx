@@ -9,6 +9,9 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
+  styled,
+  tableCellClasses,
 } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import './ResultsTable.css';
@@ -18,11 +21,38 @@ interface ResultsTableProps {
   data: any[][];
   currentPage: number;
   height: number;
+  planTime: number;
+  execTime: number;
   handlePreviousPage: () => void;
   handleNextPage: () => void;
 }
 
-const ResultsTable: React.FC<ResultsTableProps> = ({ columns, data, currentPage, height, handlePreviousPage, handleNextPage }) => {
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.grey[700],
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
+
+const StyledTypography = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.disabled,
+  fontSize: 'small',
+}));
+
+const ResultsTable: React.FC<ResultsTableProps> = ({ columns, data, currentPage, height, planTime, execTime, handlePreviousPage, handleNextPage }) => {
   return (
     <Paper elevation={3} style={{ padding: '0px', marginBottom: '0px' }}>
       <Box className="table-container" style={{ height: height }}>
@@ -31,17 +61,17 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ columns, data, currentPage,
             <TableHead>
               <TableRow>
                 {columns.map((column, index) => (
-                  <TableCell key={index} className="table-cell">{column}</TableCell>
+                  <StyledTableCell key={index} className="table-cell">{column}</StyledTableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
               {data.map((row, rowIndex) => (
-                <TableRow key={rowIndex}>
+                <StyledTableRow key={rowIndex}>
                   {row.map((cell, cellIndex) => (
-                    <TableCell key={cellIndex} className="table-cell">{cell}</TableCell>
+                    <StyledTableCell key={cellIndex} className="table-cell">{cell}</StyledTableCell>
                   ))}
-                </TableRow>
+                </StyledTableRow>
               ))}
             </TableBody>
           </Table>
@@ -50,6 +80,11 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ columns, data, currentPage,
           <IconButton onClick={handlePreviousPage} disabled={currentPage === 0}>
             <ArrowBack />
           </IconButton>
+          <Box>
+            <StyledTypography>
+              plan time: {planTime}ms / exec time: {execTime}ms
+            </StyledTypography>
+          </Box>
           <IconButton onClick={handleNextPage}>
             <ArrowForward />
           </IconButton>
