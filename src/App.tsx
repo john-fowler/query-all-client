@@ -10,16 +10,31 @@ import { fetchPlan, executeSql } from './apiService';
 import { useResizable } from 'react-resizable-layout';
 import ResizeBar from './components/ResizeBar';
 import { setPlan, setColumns, setData, setResumeIdx, setCurrentPage } from './redux/sqlSlice';
+import CssBaseline from '@mui/material/CssBaseline';
+import AppBar from './components/AppBar';
+import DrawerHeader from './components/DrawerHeader';
+import Main from './components/Main';
+import TopNavBar from './components/TopNavBar';
+import LeftSideDrawer from './components/LeftSideDrawer';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { sql, plan, columns, data, maxRows, resumeIdx, currentPage } = useSelector((state: RootState) => state.sql);
   const [windowHeight, setWindowHeight] = useState<number>(window.innerHeight);
+  const [open, setOpen] = React.useState(false);
   const { position, isDragging, separatorProps } = useResizable({
     axis: 'y',
-    initial: 250,
-    min: 250
-  })
+    initial: 300,
+    min: 300
+  });
+
+  const handleDrawerOpen = useCallback(() => {
+    setOpen(true);
+  }, []);
+
+  const handleDrawerClose = useCallback(() => {
+    setOpen(false);
+  }, []);
 
   const handlePlan = useCallback(async () => {
     try {
@@ -73,32 +88,42 @@ const App: React.FC = () => {
 
   return (
     <Container className="App" maxWidth={false}>
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar position="fixed" open={open}>
+        <TopNavBar open={open} handleDrawerOpen={handleDrawerOpen} />
+      </AppBar>
+      <LeftSideDrawer open={open} handleDrawerClose={handleDrawerClose} />
+      <Main open={open}>
+        <DrawerHeader /> {/* This is to offset the size of the header */}
 
-      <Box display="flex" sx={{ margin: '20px 0px', height: position - 40 }}>
-        <SqlInputArea
-          handleGo={() => handleGo(0)}
-          handlePlan={handlePlan}
-        />
-      </Box>
-      <ResizeBar
-        dir={"horizontal"}
-        isDragging={isDragging}
-        {...separatorProps}
-      />
-      <Box sx={{ padding: '0px', margin: '0px', height: windowHeight - position - 60}}>
-        {plan && <ExecutionPlan plan={plan} />}
-        {data.length > 0 && (
-
-            <ResultsTable
-              columns={columns}
-              data={data}
-              currentPage={currentPage}
-              handlePreviousPage={handlePreviousPage}
-              handleNextPage={handleNextPage}
-              height={window.innerHeight - position - 20}
+          <Box display="flex" sx={{ marginBottom: '20px', height: position - 130 }}>
+            <SqlInputArea
+              handleGo={() => handleGo(0)}
+              handlePlan={handlePlan}
             />
-        )}
-      </Box>
+          </Box>
+          <ResizeBar
+            dir={"horizontal"}
+            isDragging={isDragging}
+            {...separatorProps}
+          />
+          <Box sx={{ padding: '0px', margin: '0px', height: windowHeight - position - 80}}>
+            {plan && <ExecutionPlan plan={plan} />}
+            {data.length > 0 && (
+                <ResultsTable
+                  columns={columns}
+                  data={data}
+                  currentPage={currentPage}
+                  handlePreviousPage={handlePreviousPage}
+                  handleNextPage={handleNextPage}
+                  height={window.innerHeight - position - 20}
+                />
+            )}
+          </Box>
+      
+      </Main>
+    </Box>
     </Container>
   );
 };
