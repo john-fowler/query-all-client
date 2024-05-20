@@ -6,7 +6,8 @@ import './App.css';
 import SqlInputArea from './components/SqlInputArea';
 import ExecutionPlan from './components/ExecutionPlan';
 import ResultsTable from './components/ResultsTable';
-import { fetchPlan, executeSql } from './apiService';
+import { executeSql } from "./service/executeSql";
+import { fetchPlan } from "./service/fetchPlan";
 import { useResizable } from 'react-resizable-layout';
 import ResizeBar from './components/ResizeBar';
 import { setResumeIdx } from './redux/sqlSlice';
@@ -17,6 +18,7 @@ import Main from './components/Main';
 import TopNavBar from './components/TopNavBar';
 import LeftSideDrawer, { drawerWidth } from './components/LeftSideDrawer';
 import ErrorPane from './components/ErrorPane';
+import { SqlPlanResponse, SqlResponse } from './service/serviceTypes';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -52,11 +54,12 @@ const App: React.FC = () => {
       dispatch(setData([]));
       dispatch(setError(''));
       const result = await fetchPlan(sql);
-      if (result.error) {
-        handleError(result.error);
+      if (!result.success) {
+        handleError(result.detailedError || result.error || 'Unknown error');
       }
       else {
-        dispatch(setPlan(result.plan));
+        const data: SqlPlanResponse = result.data!;
+        dispatch(setPlan(data.plan));
       }
     } catch (error: Error | any) {
       console.error('Error fetching plan:', error);
@@ -69,15 +72,16 @@ const App: React.FC = () => {
       dispatch(setPlan(''));
       dispatch(setError(''));
       const result = await executeSql(sql, maxRows, resumeIdx);
-      if (result.error) {
-        handleError(result.error);
+      if (!result.success) {
+        handleError(result.detailedError || result.error || 'Unknown error');
       }
       else {
-        dispatch(setColumns(result.columns));
-        dispatch(setData(result.data));
-        dispatch(setPlanTime(result.planTime));
-        dispatch(setExecTime(result.execTime));
-        dispatch(setResumeIdx(resumeIdx + result.data.length));
+        const data: SqlResponse = result.data!;
+        dispatch(setColumns(data.columns));
+        dispatch(setData(data.data));
+        dispatch(setPlanTime(data.planTime));
+        dispatch(setExecTime(data.execTime));
+        dispatch(setResumeIdx(resumeIdx + data.data.length));
         dispatch(setCurrentPage(resumeIdx / maxRows));
       }
     } catch (error: Error | any) {

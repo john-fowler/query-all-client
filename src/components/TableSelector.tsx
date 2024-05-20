@@ -8,16 +8,15 @@ import MuiAccordionSummary, {
 } from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
-import { getTableDetails, listTables } from '../apiService';
+import { getTableDetails } from "../service/getTableDetails";
+import { listTables } from "../service/listTables";
 import { AppDispatch, RootState } from '../redux/store';
 import { setTables, updateTable } from '../redux/catalogSlice';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import KeyIcon from '@mui/icons-material/Key';
-import { HashKeyAndSortIndexMetadata, IndexMetadata, PK_INDEX_NAME } from '../types';
+import { ColumnMetadata, HashKeyAndSortIndexMetadata, IndexMetadata, PK_INDEX_NAME } from '../types';
 import { insertSqlToken } from '../redux/sqlSlice';
 
-interface TableSelectorProps {
-}
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -75,6 +74,39 @@ const List = styled(MuiList)<{ component?: React.ElementType }>({
     },
 });
 
+interface ColumnListItemProps {
+    column: ColumnMetadata;
+    pkColumns: string[];
+    onClick: () => void;
+}
+
+const ColumnListItem: React.FC<ColumnListItemProps> = ({ column, pkColumns, onClick }) => {
+    return (
+        <ListItem disablePadding
+            secondaryAction={
+            <IconButton edge="end" aria-label="fill">
+                <ArrowRightIcon />
+            </IconButton>
+        }
+        onClick={onClick}
+        >
+            { pkColumns.includes(column.name) ? 
+                <ListItemIcon>
+                    <KeyIcon />
+                </ListItemIcon>
+                : 
+                <ListItemIcon/>
+            }
+            <ListItemButton>
+                <ListItemText primary={column.name} />
+            </ListItemButton>
+        </ListItem>
+    );
+};
+
+interface TableSelectorProps {
+}
+
 const TableSelector: React.FC<TableSelectorProps> = () => {
     const dispatch = useDispatch<AppDispatch>();
     const [expanded, setExpanded] = React.useState<string | false>('~~~');
@@ -88,7 +120,7 @@ const TableSelector: React.FC<TableSelectorProps> = () => {
     useEffect(() => {
         try {
             listTables().then((result) => {
-                dispatch(setTables(result.data));
+                dispatch(setTables(result.data!));
             });
         }
         catch (error: Error | any) {
@@ -102,7 +134,7 @@ const TableSelector: React.FC<TableSelectorProps> = () => {
         if (tab) {
             if (tab.columns.length === 0) {
                 getTableDetails(tab.name).then((result) => {
-                    dispatch(updateTable(result.data));
+                    dispatch(updateTable(result.data!));
                 });
             }
             else {
@@ -146,28 +178,12 @@ const TableSelector: React.FC<TableSelectorProps> = () => {
                                 table.columns.length > 0 ? 
                                 <List>
                                     {table.columns.map((column) =>
-                                            <ListItem key={column.name} disablePadding
-                                                secondaryAction={
-                                                <IconButton edge="end" aria-label="fill">
-                                                    <ArrowRightIcon />
-                                                </IconButton>
-                                            }
-                                            onClick={(event: React.MouseEvent) => {
-                                                event.stopPropagation();
-                                                handleTokenClick(column.name);
-                                            }}
-                                            >
-                                                { pkColumns.includes(column.name) ? 
-                                                    <ListItemIcon>
-                                                        <KeyIcon />
-                                                    </ListItemIcon>
-                                                    : 
-                                                    <ListItemIcon/>
-                                                }
-                                                <ListItemButton>
-                                                    <ListItemText primary={column.name} />
-                                                </ListItemButton>
-                                            </ListItem>
+                                        <ColumnListItem
+                                            key={column.name} 
+                                            column={column}
+                                            pkColumns={pkColumns}
+                                            onClick={() => handleTokenClick(column.name)}
+                                        />
                                     )}
                                 </List>
                                  :
