@@ -19,6 +19,7 @@ import {
     setPlanTime,
     setExecTime,
     setCurrentPage,
+    setFirstRowIdx,
 } from './redux/resultsSlice';
 import CssBaseline from '@mui/material/CssBaseline';
 import DrawerHeader from './components/DrawerHeader';
@@ -33,8 +34,16 @@ const App: React.FC = () => {
     const { sql, maxRows, resumeIdx } = useSelector(
         (state: RootState) => state.sql,
     );
-    const { error, plan, columns, data, planTime, execTime, currentPage } =
-        useSelector((state: RootState) => state.results);
+    const {
+        error,
+        plan,
+        columns,
+        data,
+        planTime,
+        execTime,
+        currentPage,
+        firstRowIdx,
+    } = useSelector((state: RootState) => state.results);
     const [windowHeight, setWindowHeight] = useState<number>(
         window.innerHeight,
     );
@@ -103,7 +112,8 @@ const App: React.FC = () => {
                     dispatch(setData(respData.data));
                     dispatch(setPlanTime(respData.planTime));
                     dispatch(setExecTime(respData.execTime));
-                    dispatch(setResumeIdx(resIdx + respData.data.length));
+                    dispatch(setFirstRowIdx(respData.firstRowIdx));
+                    dispatch(setResumeIdx(respData.resumeIdx));
                     dispatch(setCurrentPage(resIdx / maxRows));
                 }
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -122,12 +132,12 @@ const App: React.FC = () => {
     }, [handleGo, resumeIdx]);
 
     const handlePreviousPage = useCallback(() => {
-        const newResumeIdx = resumeIdx - maxRows * 2;
+        const newResumeIdx = firstRowIdx - maxRows;
         if (newResumeIdx >= 0) {
             handleGo(newResumeIdx);
             dispatch(setResumeIdx(newResumeIdx));
         }
-    }, [resumeIdx, maxRows, handleGo, dispatch]);
+    }, [firstRowIdx, maxRows, handleGo, dispatch]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -185,6 +195,8 @@ const App: React.FC = () => {
                                 planTime={planTime}
                                 execTime={execTime}
                                 currentPage={currentPage}
+                                firstRowIdx={firstRowIdx}
+                                hasNext={(resumeIdx ?? 0) > 0}
                                 handlePreviousPage={handlePreviousPage}
                                 handleNextPage={handleNextPage}
                                 height={window.innerHeight - position - 20}

@@ -9,6 +9,7 @@ interface ResultsState {
     planTime: number;
     execTime: number;
     currentPage: number;
+    firstRowIdx: number;
 }
 
 const initialState: ResultsState = {
@@ -19,6 +20,7 @@ const initialState: ResultsState = {
     planTime: 0,
     execTime: 0,
     currentPage: 0,
+    firstRowIdx: 0,
 };
 
 const resultsSlice = createSlice({
@@ -46,6 +48,9 @@ const resultsSlice = createSlice({
         setCurrentPage: (state, action: PayloadAction<number>) => {
             state.currentPage = action.payload;
         },
+        setFirstRowIdx: (state, action: PayloadAction<number>) => {
+            state.firstRowIdx = action.payload;
+        },
     },
 });
 
@@ -57,6 +62,7 @@ export const {
     setPlanTime,
     setExecTime,
     setCurrentPage,
+    setFirstRowIdx,
 } = resultsSlice.actions;
 
 export default resultsSlice.reducer;

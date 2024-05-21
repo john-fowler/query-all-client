@@ -3,6 +3,7 @@ import {
     Box,
     IconButton,
     Paper,
+    Stack,
     Table,
     TableBody,
     TableCell,
@@ -12,6 +13,7 @@ import {
     Typography,
     styled,
     tableCellClasses,
+    useTheme,
 } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import './ResultsTable.css';
@@ -21,9 +23,11 @@ interface ResultsTableProps {
     columns: string[];
     data: Row[];
     currentPage: number;
+    firstRowIdx: number;
     height: number;
     planTime: number;
     execTime: number;
+    hasNext: boolean;
     handlePreviousPage: () => void;
     handleNextPage: () => void;
 }
@@ -49,7 +53,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-const StyledTypography = styled(Typography)(({ theme }) => ({
+const TimingText = styled(Typography)(({ theme }) => ({
     color: theme.palette.text.disabled,
     fontSize: 'small',
 }));
@@ -58,12 +62,15 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
     columns,
     data,
     currentPage,
+    firstRowIdx,
     height,
     planTime,
     execTime,
+    hasNext,
     handlePreviousPage,
     handleNextPage,
 }) => {
+    const theme = useTheme();
     return (
         <Paper elevation={3} style={{ padding: '0px', marginBottom: '0px' }}>
             <Box className='table-container' style={{ height }}>
@@ -71,6 +78,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
                     <Table stickyHeader size='small'>
                         <TableHead>
                             <TableRow>
+                                <StyledTableCell />
                                 {columns.map((column, index) => (
                                     <StyledTableCell
                                         // eslint-disable-next-line react/no-array-index-key
@@ -85,6 +93,13 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
                             {data.map((row, rowIndex) => (
                                 // eslint-disable-next-line react/no-array-index-key
                                 <StyledTableRow key={rowIndex}>
+                                    <StyledTableCell
+                                        className='table-cell'
+                                        sx={{
+                                            color: theme.palette.text.disabled,
+                                        }}>
+                                        {firstRowIdx + rowIndex + 1}
+                                    </StyledTableCell>
                                     {row.map((cell, cellIndex) => (
                                         <StyledTableCell
                                             // eslint-disable-next-line react/no-array-index-key
@@ -104,12 +119,16 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
                         disabled={currentPage === 0}>
                         <ArrowBack />
                     </IconButton>
-                    <Box>
-                        <StyledTypography>
+                    <Stack direction='column' alignItems='center'>
+                        <Typography>
+                            page {currentPage + 1}: rows {firstRowIdx + 1}-
+                            {firstRowIdx + data.length}
+                        </Typography>
+                        <TimingText>
                             plan time: {planTime}ms / exec time: {execTime}ms
-                        </StyledTypography>
-                    </Box>
-                    <IconButton onClick={handleNextPage}>
+                        </TimingText>
+                    </Stack>
+                    <IconButton onClick={handleNextPage} disabled={!hasNext}>
                         <ArrowForward />
                     </IconButton>
                 </Box>

@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface SqlState {
     sql: string;
     maxRows: number;
-    resumeIdx: number;
+    resumeIdx: number | undefined;
     selectionStart: number;
     selectionEnd: number;
 }
@@ -11,7 +11,7 @@ interface SqlState {
 const initialState: SqlState = {
     sql: '',
     maxRows: 100,
-    resumeIdx: 0,
+    resumeIdx: undefined,
     selectionStart: 0,
     selectionEnd: 0,
 };
@@ -26,7 +26,7 @@ const sqlSlice = createSlice({
         setMaxRows: (state, action: PayloadAction<number>) => {
             state.maxRows = action.payload;
         },
-        setResumeIdx: (state, action: PayloadAction<number>) => {
+        setResumeIdx: (state, action: PayloadAction<number | undefined>) => {
             state.resumeIdx = action.payload;
         },
         setSelection: (
