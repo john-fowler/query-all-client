@@ -1,31 +1,28 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import './ResizeBar.css';
 
-export const cn = (...args: any[]) => args.filter(Boolean).join(" ");
+export const cn = (...args: (string | boolean)[]) =>
+    args.filter(Boolean).join(' ');
 
-const ResizeBar = ({
-  id = 'drag-bar',
-  dir,
-  isDragging,
-  ...props
-}: any) => {
-  const [isFocused, setIsFocused] = useState(false)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const ResizeBar = ({ id = 'drag-bar', dir, isDragging, ...props }: any) => {
+    const [isFocused, setIsFocused] = useState(false);
 
-  return (
-    <div
-      id={id}
-      data-testid={id}
-      tabIndex={0}
-      className={cn(
-        'sample-drag-bar',
-        dir === 'horizontal' && 'sample-drag-bar--horizontal',
-        (isDragging || isFocused) && 'sample-drag-bar--dragging'
-      )}
-      onFocus={() => setIsFocused(true)}
-      onBlur={() => setIsFocused(false)}
-      {...props}
-    />
-  )
-}
+    return (
+        <div
+            id={id}
+            data-testid={id}
+            className={cn(
+                'sample-drag-bar',
+                dir === 'horizontal' && 'sample-drag-bar--horizontal',
+                (isDragging || isFocused) && 'sample-drag-bar--dragging',
+            )}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...props}
+        />
+    );
+};
 
-export default ResizeBar
+export default ResizeBar;

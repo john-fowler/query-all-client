@@ -4,15 +4,15 @@
     background-color: white; /* #d1d5db; */
     cursor: col-resize;
     transition: background-color 0.15s 0.15s ease-in-out;
-  }
-  
-  .sample-drag-bar.sample-drag-bar--dragging,
-  .sample-drag-bar:hover{
-    background-color: #63B3ED;
-  }
-  
-  .sample-drag-bar.sample-drag-bar--horizontal {
+}
+
+.sample-drag-bar.sample-drag-bar--dragging,
+.sample-drag-bar:hover {
+    background-color: #63b3ed;
+}
+
+.sample-drag-bar.sample-drag-bar--horizontal {
     height: 15px;
     width: 100%;
     cursor: row-resize;
-  }
+}

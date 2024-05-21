@@ -1,22 +1,22 @@
 .table-container {
     display: flex;
     flex-direction: column;
-  }
-  
-  .table-scroll {
+}
+
+.table-scroll {
     overflow: auto;
     flex-grow: 1;
-  }
-  
-  .pagination-controls {
+}
+
+.pagination-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-  }
-  
-  .table-cell {
+}
+
+.table-cell {
     white-space: nowrap; /* Prevent text from wrapping */
     overflow: hidden;
     text-overflow: ellipsis; /* Add ellipsis for overflowing text */
-  }
+}
