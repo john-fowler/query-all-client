@@ -19,6 +19,8 @@ function extendTableMetadata(table: TableMetadata): TableMetadata {
   if (pkIndex) {
     const pkColumns = pkIndex.fieldNames.map((fieldName) => table.columns.find((column) => column.name === fieldName)!);
     table.primaryKey = pkColumns;
+    //  Let's remove the pkColumns from the list of columns.
+    table.columns = table.columns.filter((column) => !pkColumns.includes(column));
   }
   table.columns.sort((a, b) => a.name.localeCompare(b.name));
   table.columns.forEach((column) => {

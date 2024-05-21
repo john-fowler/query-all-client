@@ -14,7 +14,7 @@ import { AppDispatch, RootState } from '../redux/store';
 import { setTables, updateTable } from '../redux/catalogSlice';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import KeyIcon from '@mui/icons-material/Key';
-import { ColumnMetadata, HashKeyAndSortIndexMetadata, IndexMetadata, PK_INDEX_NAME } from '../types';
+import { ColumnMetadata } from '../types';
 import { insertSqlToken } from '../redux/sqlSlice';
 
 
@@ -111,7 +111,6 @@ const TableSelector: React.FC<TableSelectorProps> = () => {
     const dispatch = useDispatch<AppDispatch>();
     const [expanded, setExpanded] = React.useState<string | false>('~~~');
     const { tables, tableFilter } = useSelector((state: RootState) => state.catalog);
-    const [ pkColumns, setPkColumns ] = React.useState<string[]>([]);
 
     const tablesToDisplay = useMemo(() => {
         return tables.filter((table) => table.name.toLowerCase().includes(tableFilter.toLowerCase()));
@@ -136,13 +135,6 @@ const TableSelector: React.FC<TableSelectorProps> = () => {
                 getTableDetails(tab.name).then((result) => {
                     dispatch(updateTable(result.data!));
                 });
-            }
-            else {
-                const pkIndex: IndexMetadata | undefined = tab.indexes.find((index) => index.name === PK_INDEX_NAME);
-                if ('hashKeyName' in (pkIndex ?? {})) {
-                    const pkHashIndex: HashKeyAndSortIndexMetadata = pkIndex as HashKeyAndSortIndexMetadata;
-                    setPkColumns([pkHashIndex.hashKeyName, pkHashIndex.sortKeyName || '']); 
-                }
             }
         }
     }, [dispatch, expanded, tables]);
