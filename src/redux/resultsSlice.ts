@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Row } from '../types';
+import { Row } from '../db-types';
 
 interface ResultsState {
     error: string;

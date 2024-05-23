@@ -1,4 +1,4 @@
-import { PK_INDEX_NAME, TableMetadata } from '../types';
+import { PK_INDEX_NAME, TableMetadata } from '../db-types';
 import { ApiResponse, API_BASE_URL } from './serviceTypes';
 
 function extendTableMetadata(table: TableMetadata): TableMetadata {

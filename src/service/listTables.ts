@@ -1,4 +1,4 @@
-import { TableMetadata } from '../types';
+import { TableMetadata } from '../db-types';
 import { ApiResponse, API_BASE_URL } from './serviceTypes';
 
 export const listTables = async (): Promise<ApiResponse<TableMetadata[]>> => {

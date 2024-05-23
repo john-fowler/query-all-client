@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from './redux/store';
-import { Box, Container } from '@mui/material';
+import { Box, Container, Stack } from '@mui/material';
 import './App.css';
 import SqlInputArea from './components/SqlInputArea';
 import ExecutionPlan from './components/ExecutionPlan';
@@ -28,6 +28,7 @@ import TopNavBar from './components/TopNavBar';
 import LeftSideDrawer, { drawerWidth } from './components/LeftSideDrawer';
 import ErrorPane from './components/ErrorPane';
 import { SqlPlanResponse, SqlResponse } from './service/serviceTypes';
+import ChatPane from './components/ChatPane';
 
 const App: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -48,19 +49,33 @@ const App: React.FC = () => {
         window.innerHeight,
     );
     const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
-    const [open, setOpen] = React.useState(false);
-    const { position, isDragging, separatorProps } = useResizable({
+    const [drawerOpen, setDrawerOpen] = React.useState(false);
+    const [chatOpen, setChatOpen] = React.useState(false);
+    const {
+        position: verticalPosition,
+        isDragging: isVerticalDragging,
+        separatorProps: verticalSeparatorProps,
+    } = useResizable({
         axis: 'y',
         initial: 300,
         min: 300,
     });
+    const {
+        position: horizontalPosition,
+        isDragging: isHorizontalDragging,
+        separatorProps: horizontalSeparatorProps,
+    } = useResizable({
+        axis: 'x',
+        initial: window.innerWidth / 2,
+        min: 300,
+    });
 
     const handleDrawerOpen = useCallback(() => {
-        setOpen(true);
+        setDrawerOpen(true);
     }, []);
 
     const handleDrawerClose = useCallback(() => {
-        setOpen(false);
+        setDrawerOpen(false);
     }, []);
 
     const handleError = useCallback(
@@ -144,9 +159,7 @@ const App: React.FC = () => {
             setWindowHeight(window.innerHeight);
             setWindowWidth(window.innerWidth);
         };
-
         window.addEventListener('resize', handleResize);
-
         return () => {
             window.removeEventListener('resize', handleResize);
         };
@@ -156,53 +169,95 @@ const App: React.FC = () => {
         <Container className='App' maxWidth={false}>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
-                <TopNavBar open={open} handleDrawerOpen={handleDrawerOpen} />
+                <TopNavBar
+                    drawerOpen={drawerOpen}
+                    handleDrawerOpen={handleDrawerOpen}
+                    chatOpen={chatOpen}
+                    setChatOpen={setChatOpen}
+                />
                 <LeftSideDrawer
-                    open={open}
+                    open={drawerOpen}
                     handleDrawerClose={handleDrawerClose}
                 />
-                <Main open={open}>
-                    <DrawerHeader />{' '}
+                <Main open={drawerOpen}>
+                    <DrawerHeader />
                     {/* This is to offset the size of the header */}
-                    <Box
-                        display='flex'
-                        sx={{ marginBottom: '10px', height: position - 125 }}>
-                        <SqlInputArea
-                            handleGo={() => handleGo(0)}
-                            handlePlan={handlePlan}
-                        />
-                    </Box>
-                    <ResizeBar
-                        dir='horizontal'
-                        isDragging={isDragging}
-                        // eslint-disable-next-line react/jsx-props-no-spreading
-                        {...separatorProps}
-                    />
-                    <Box
-                        sx={{
-                            padding: '0px',
-                            margin: '0px',
-                            height: windowHeight - position - 90,
-                            maxWidth:
-                                windowWidth - (open ? drawerWidth : 0) - 100,
-                        }}>
-                        {error && <ErrorPane error={error} />}
-                        {plan && <ExecutionPlan plan={plan} />}
-                        {data.length > 0 && (
-                            <ResultsTable
-                                columns={columns}
-                                data={data}
-                                planTime={planTime}
-                                execTime={execTime}
-                                currentPage={currentPage}
-                                firstRowIdx={firstRowIdx}
-                                hasNext={(resumeIdx ?? 0) > 0}
-                                handlePreviousPage={handlePreviousPage}
-                                handleNextPage={handleNextPage}
-                                height={window.innerHeight - position - 20}
+                    <Stack direction='row' spacing={2} alignItems='stretch'>
+                        {chatOpen && (
+                            <Box
+                                display='flex'
+                                flexDirection='row'
+                                alignItems='stretch'
+                                sx={{
+                                    width:
+                                        horizontalPosition -
+                                        62 -
+                                        (drawerOpen ? drawerWidth : 0) -
+                                        10,
+                                }}>
+                                <ChatPane />
+                            </Box>
+                        )}
+                        {chatOpen && (
+                            <ResizeBar
+                                dir='vertical'
+                                isDragging={isHorizontalDragging}
+                                // eslint-disable-next-line react/jsx-props-no-spreading
+                                {...horizontalSeparatorProps}
                             />
                         )}
-                    </Box>
+                        <Box flex={1}>
+                            <Box
+                                display='flex'
+                                sx={{
+                                    marginBottom: '10px',
+                                    height: verticalPosition - 125,
+                                }}>
+                                <SqlInputArea
+                                    handleGo={() => handleGo(0)}
+                                    handlePlan={handlePlan}
+                                />
+                            </Box>
+                            <ResizeBar
+                                dir='horizontal'
+                                isDragging={isVerticalDragging}
+                                // eslint-disable-next-line react/jsx-props-no-spreading
+                                {...verticalSeparatorProps}
+                            />
+                            <Box
+                                sx={{
+                                    padding: '0px',
+                                    margin: '0px',
+                                    height:
+                                        windowHeight - verticalPosition - 90,
+                                    maxWidth:
+                                        windowWidth -
+                                        (drawerOpen ? drawerWidth : 0) -
+                                        100,
+                                }}>
+                                {error && <ErrorPane error={error} />}
+                                {plan && <ExecutionPlan plan={plan} />}
+                                {data.length > 0 && (
+                                    <ResultsTable
+                                        columns={columns}
+                                        data={data}
+                                        planTime={planTime}
+                                        execTime={execTime}
+                                        currentPage={currentPage}
+                                        firstRowIdx={firstRowIdx}
+                                        hasNext={(resumeIdx ?? 0) > 0}
+                                        handlePreviousPage={handlePreviousPage}
+                                        handleNextPage={handleNextPage}
+                                        height={
+                                            window.innerHeight -
+                                            verticalPosition -
+                                            20
+                                        }
+                                    />
+                                )}
+                            </Box>
+                        </Box>
+                    </Stack>
                 </Main>
             </Box>
         </Container>

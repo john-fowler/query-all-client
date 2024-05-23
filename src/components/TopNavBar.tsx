@@ -2,6 +2,8 @@ import React from 'react';
 import { IconButton, Toolbar, Typography, styled } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import MenuIcon from '@mui/icons-material/Menu';
+import ChatOffIcon from '@mui/icons-material/ChatBubbleOutline';
+import ChatOnIcon from '@mui/icons-material/Chat';
 import { drawerWidth } from './LeftSideDrawer';
 
 interface AppBarProps extends MuiAppBarProps {
@@ -27,20 +29,35 @@ const AppBar = styled(MuiAppBar, {
 
 interface TopNavBarProps {
     handleDrawerOpen: () => void;
-    open: boolean;
+    drawerOpen: boolean;
+    chatOpen: boolean;
+    setChatOpen: (open: boolean) => void;
 }
 
-const TopNavBar: React.FC<TopNavBarProps> = ({ open, handleDrawerOpen }) => {
+const TopNavBar: React.FC<TopNavBarProps> = ({
+    drawerOpen,
+    handleDrawerOpen,
+    chatOpen,
+    setChatOpen,
+}) => {
     return (
-        <AppBar position='fixed' open={open}>
+        <AppBar position='fixed' open={drawerOpen}>
             <Toolbar>
                 <IconButton
                     color='inherit'
                     aria-label='open drawer'
                     onClick={handleDrawerOpen}
                     edge='start'
-                    sx={{ mr: 2, ...(open && { display: 'none' }) }}>
+                    sx={{ mr: 2, ...(drawerOpen && { display: 'none' }) }}>
                     <MenuIcon />
+                </IconButton>
+                <IconButton
+                    color='inherit'
+                    aria-label='open chat'
+                    onClick={() => setChatOpen(!chatOpen)}
+                    edge='start'
+                    sx={{ mr: 2 }}>
+                    {chatOpen ? <ChatOnIcon /> : <ChatOffIcon />}
                 </IconButton>
                 <Typography variant='h6' noWrap component='div'>
                     QueryAll

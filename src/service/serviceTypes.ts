@@ -1,4 +1,4 @@
-import { Row } from '../types';
+import { Row } from '../db-types';
 
 export const API_BASE_URL = 'http://localhost:8080/v1';
 

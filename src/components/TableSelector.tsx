@@ -24,7 +24,7 @@ import { AppDispatch, RootState } from '../redux/store';
 import { setTables, updateTable } from '../redux/catalogSlice';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import KeyIcon from '@mui/icons-material/Key';
-import { ColumnMetadata } from '../types';
+import { ColumnMetadata } from '../db-types';
 import { insertSqlToken } from '../redux/sqlSlice';
 
 const Accordion = styled((props: AccordionProps) => (

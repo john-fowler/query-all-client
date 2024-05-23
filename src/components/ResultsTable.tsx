@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import './ResultsTable.css';
-import { Row } from '../types';
+import { Row } from '../db-types';
 
 interface ResultsTableProps {
     columns: string[];

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TableMetadata } from '../types';
+import { TableMetadata } from '../db-types';
 
 interface CatalogState {
     tables: TableMetadata[];
