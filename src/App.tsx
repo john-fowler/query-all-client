@@ -70,14 +70,6 @@ const App: React.FC = () => {
         min: 450,
     });
 
-    const handleDrawerOpen = useCallback(() => {
-        setDrawerOpen(true);
-    }, []);
-
-    const handleDrawerClose = useCallback(() => {
-        setDrawerOpen(false);
-    }, []);
-
     const handleError = useCallback(
         async (err: string) => {
             dispatch(setColumns([]));
@@ -171,14 +163,11 @@ const App: React.FC = () => {
                 <CssBaseline />
                 <TopNavBar
                     drawerOpen={drawerOpen}
-                    handleDrawerOpen={handleDrawerOpen}
+                    setDrawerOpen={setDrawerOpen}
                     chatOpen={chatOpen}
                     setChatOpen={setChatOpen}
                 />
-                <LeftSideDrawer
-                    open={drawerOpen}
-                    handleDrawerClose={handleDrawerClose}
-                />
+                <LeftSideDrawer open={drawerOpen} />
                 <Main open={drawerOpen}>
                     <DrawerHeader />
                     {/* This is to offset the size of the header */}

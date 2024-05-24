@@ -2,6 +2,7 @@ import React from 'react';
 import { IconButton, Toolbar, Typography, styled } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChatOffIcon from '@mui/icons-material/ChatBubbleOutline';
 import ChatOnIcon from '@mui/icons-material/Chat';
 import { drawerWidth } from './LeftSideDrawer';
@@ -28,15 +29,15 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 interface TopNavBarProps {
-    handleDrawerOpen: () => void;
     drawerOpen: boolean;
+    setDrawerOpen: (open: boolean) => void;
     chatOpen: boolean;
     setChatOpen: (open: boolean) => void;
 }
 
 const TopNavBar: React.FC<TopNavBarProps> = ({
     drawerOpen,
-    handleDrawerOpen,
+    setDrawerOpen,
     chatOpen,
     setChatOpen,
 }) => {
@@ -51,10 +52,10 @@ const TopNavBar: React.FC<TopNavBarProps> = ({
                 <IconButton
                     color='inherit'
                     aria-label='open drawer'
-                    onClick={handleDrawerOpen}
+                    onClick={() => setDrawerOpen(!drawerOpen)}
                     edge='start'
-                    sx={{ mr: 2, ...(drawerOpen && { display: 'none' }) }}>
-                    <MenuIcon />
+                    sx={{ mr: 2 }}>
+                    {drawerOpen ? <ChevronLeftIcon /> : <MenuIcon />}
                 </IconButton>
                 <Typography variant='h6' noWrap component='div'>
                     QueryAll

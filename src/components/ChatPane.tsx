@@ -1,7 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+/* eslint-disable react/no-array-index-key */
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../redux/store';
 import { createThread, sendMessage } from '../service/openAiApi';
+import { setSql } from '../redux/sqlSlice';
 import {
     Box,
     Button,
@@ -11,7 +13,6 @@ import {
     ListItemText,
     Stack,
 } from '@mui/material';
-import { MuiMarkdown } from 'mui-markdown';
 import './ChatPane.css';
 
 interface ChatPaneProps {
@@ -54,6 +55,45 @@ const ChatPane: React.FC<ChatPaneProps> = ({ height }) => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    const handleUseSql = useCallback(
+        (sql: string) => {
+            if (sql.charAt(sql.length - 1) === ';') {
+                dispatch(setSql(sql.slice(0, -1)));
+            } else {
+                dispatch(setSql(sql));
+            }
+        },
+        [dispatch],
+    );
+
+    const expandMarkdown = useCallback(
+        (text: string) => {
+            const splitText = text.split('```');
+            return splitText.map((line, index) => {
+                if (index % 2 === 0) {
+                    return line.split('\n').map((l, i) => (
+                        <p key={i} className='markdownText'>
+                            {l}
+                        </p>
+                    ));
+                }
+                return (
+                    <pre key={index} className='markdownCode'>
+                        <Button
+                            onClick={() => handleUseSql(line.trim())}
+                            className='useSqlBtn'
+                            size='small'
+                            variant='outlined'>
+                            use
+                        </Button>
+                        {line.trim()}
+                    </pre>
+                );
+            });
+        },
+        [handleUseSql],
+    );
+
     return (
         <Box
             sx={{
@@ -88,6 +128,8 @@ const ChatPane: React.FC<ChatPaneProps> = ({ height }) => {
                                         align: 'right',
                                     }}
                                     sx={{
+                                        color: 'white',
+                                        flexGrow: 0,
                                         maxWidth: '60%',
                                         bgcolor: 'primary.light',
                                         borderRadius: 2,
@@ -115,7 +157,7 @@ const ChatPane: React.FC<ChatPaneProps> = ({ height }) => {
                                         borderRadius: 2,
                                         p: 2,
                                     }}>
-                                    <MuiMarkdown>{msg.text}</MuiMarkdown>
+                                    {expandMarkdown(msg.text)}
                                 </Stack>
                             </ListItem>
                         ),

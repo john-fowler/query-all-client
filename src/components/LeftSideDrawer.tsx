@@ -1,10 +1,8 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
-import { Divider, Drawer, IconButton, useTheme } from '@mui/material';
+import { Divider, Drawer, IconButton } from '@mui/material';
 import DrawerHeader from './DrawerHeader';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TableSelector from './TableSelector';
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
@@ -15,17 +13,12 @@ import { setTableFilter } from '../redux/catalogSlice';
 export const drawerWidth = 340;
 
 interface LeftSideDrawerProps {
-    handleDrawerClose: () => void;
     open: boolean;
 }
 
-const LeftSideDrawer: React.FC<LeftSideDrawerProps> = ({
-    open,
-    handleDrawerClose,
-}) => {
+const LeftSideDrawer: React.FC<LeftSideDrawerProps> = ({ open }) => {
     const dispatch = useDispatch<AppDispatch>();
     const { tableFilter } = useSelector((state: RootState) => state.catalog);
-    const theme = useTheme();
 
     const setFilter = useCallback(
         (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,15 +71,6 @@ const LeftSideDrawer: React.FC<LeftSideDrawerProps> = ({
                         <HighlightOffIcon />
                     </IconButton>
                 </Paper>
-                <IconButton
-                    onClick={handleDrawerClose}
-                    sx={{ marginLeft: '10px' }}>
-                    {theme.direction === 'ltr' ? (
-                        <ChevronLeftIcon />
-                    ) : (
-                        <ChevronRightIcon />
-                    )}
-                </IconButton>
             </DrawerHeader>
             <Divider />
             <TableSelector />
