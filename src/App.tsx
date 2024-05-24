@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from './redux/store';
 import { Box, Container, Stack } from '@mui/material';
@@ -157,6 +157,31 @@ const App: React.FC = () => {
         };
     }, []);
 
+    const {
+        mainHeight,
+        topPaneHeight,
+        bottomPaneHeight,
+        leftPaneWidth,
+        rightPaneWidth,
+    } = useMemo(() => {
+        return {
+            mainHeight: windowHeight - 112,
+            topPaneHeight: verticalPosition - 125,
+            bottomPaneHeight: windowHeight - verticalPosition - 30,
+            leftPaneWidth:
+                (chatOpen ? horizontalPosition - 65 : windowWidth - 90) -
+                (drawerOpen ? drawerWidth : 0),
+            rightPaneWidth: windowWidth - horizontalPosition - 52,
+        };
+    }, [
+        windowHeight,
+        verticalPosition,
+        chatOpen,
+        horizontalPosition,
+        windowWidth,
+        drawerOpen,
+    ]);
+
     return (
         <Container className='App' maxWidth={false}>
             <Box sx={{ display: 'flex' }}>
@@ -177,7 +202,7 @@ const App: React.FC = () => {
                                 display='flex'
                                 sx={{
                                     marginBottom: '10px',
-                                    height: verticalPosition - 125,
+                                    height: topPaneHeight,
                                 }}>
                                 <SqlInputArea
                                     handleGo={() => handleGo(0)}
@@ -194,16 +219,21 @@ const App: React.FC = () => {
                                 sx={{
                                     padding: '0px',
                                     margin: '0px',
-                                    height:
-                                        windowHeight - verticalPosition - 90,
-                                    maxWidth:
-                                        (chatOpen
-                                            ? horizontalPosition - 65
-                                            : windowWidth - 90) -
-                                        (drawerOpen ? drawerWidth : 0),
+                                    height: bottomPaneHeight,
+                                    maxWidth: leftPaneWidth,
                                 }}>
-                                {error && <ErrorPane error={error} />}
-                                {plan && <ExecutionPlan plan={plan} />}
+                                {error && (
+                                    <ErrorPane
+                                        error={error}
+                                        height={bottomPaneHeight}
+                                    />
+                                )}
+                                {plan && (
+                                    <ExecutionPlan
+                                        plan={plan}
+                                        height={bottomPaneHeight}
+                                    />
+                                )}
                                 {data.length > 0 && (
                                     <ResultsTable
                                         columns={columns}
@@ -215,11 +245,7 @@ const App: React.FC = () => {
                                         hasNext={(resumeIdx ?? 0) > 0}
                                         handlePreviousPage={handlePreviousPage}
                                         handleNextPage={handleNextPage}
-                                        height={
-                                            window.innerHeight -
-                                            verticalPosition -
-                                            30
-                                        }
+                                        height={bottomPaneHeight}
                                     />
                                 )}
                             </Box>
@@ -230,11 +256,7 @@ const App: React.FC = () => {
                                 flexDirection='row'
                                 alignItems='stretch'
                                 sx={{
-                                    width:
-                                        windowWidth -
-                                        // eslint-disable-next-line no-nested-ternary
-                                        horizontalPosition -
-                                        52,
+                                    width: rightPaneWidth,
                                     marginLeft: '10px',
                                 }}>
                                 <ResizeBar
@@ -243,7 +265,7 @@ const App: React.FC = () => {
                                     // eslint-disable-next-line react/jsx-props-no-spreading
                                     {...horizontalSeparatorProps}
                                 />
-                                <ChatPane height={windowHeight - 112} />
+                                <ChatPane height={mainHeight} />
                             </Box>
                         )}
                     </Stack>
