@@ -67,7 +67,7 @@ const App: React.FC = () => {
     } = useResizable({
         axis: 'x',
         initial: window.innerWidth / 2,
-        min: 300,
+        min: 450,
     });
 
     const handleDrawerOpen = useCallback(() => {
@@ -182,30 +182,7 @@ const App: React.FC = () => {
                 <Main open={drawerOpen}>
                     <DrawerHeader />
                     {/* This is to offset the size of the header */}
-                    <Stack direction='row' spacing={2} alignItems='stretch'>
-                        {chatOpen && (
-                            <Box
-                                display='flex'
-                                flexDirection='row'
-                                alignItems='stretch'
-                                sx={{
-                                    width:
-                                        horizontalPosition -
-                                        62 -
-                                        (drawerOpen ? drawerWidth : 0) -
-                                        10,
-                                }}>
-                                <ChatPane />
-                            </Box>
-                        )}
-                        {chatOpen && (
-                            <ResizeBar
-                                dir='vertical'
-                                isDragging={isHorizontalDragging}
-                                // eslint-disable-next-line react/jsx-props-no-spreading
-                                {...horizontalSeparatorProps}
-                            />
-                        )}
+                    <Stack direction='row' alignItems='stretch'>
                         <Box flex={1}>
                             <Box
                                 display='flex'
@@ -231,9 +208,10 @@ const App: React.FC = () => {
                                     height:
                                         windowHeight - verticalPosition - 90,
                                     maxWidth:
-                                        windowWidth -
-                                        (drawerOpen ? drawerWidth : 0) -
-                                        100,
+                                        (chatOpen
+                                            ? horizontalPosition - 65
+                                            : windowWidth - 90) -
+                                        (drawerOpen ? drawerWidth : 0),
                                 }}>
                                 {error && <ErrorPane error={error} />}
                                 {plan && <ExecutionPlan plan={plan} />}
@@ -251,12 +229,34 @@ const App: React.FC = () => {
                                         height={
                                             window.innerHeight -
                                             verticalPosition -
-                                            20
+                                            30
                                         }
                                     />
                                 )}
                             </Box>
                         </Box>
+                        {chatOpen && (
+                            <Box
+                                display='flex'
+                                flexDirection='row'
+                                alignItems='stretch'
+                                sx={{
+                                    width:
+                                        windowWidth -
+                                        // eslint-disable-next-line no-nested-ternary
+                                        horizontalPosition -
+                                        52,
+                                    marginLeft: '10px',
+                                }}>
+                                <ResizeBar
+                                    dir='vertical'
+                                    isDragging={isHorizontalDragging}
+                                    // eslint-disable-next-line react/jsx-props-no-spreading
+                                    {...horizontalSeparatorProps}
+                                />
+                                <ChatPane height={windowHeight - 112} />
+                            </Box>
+                        )}
                     </Stack>
                 </Main>
             </Box>

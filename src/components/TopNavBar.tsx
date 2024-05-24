@@ -42,7 +42,12 @@ const TopNavBar: React.FC<TopNavBarProps> = ({
 }) => {
     return (
         <AppBar position='fixed' open={drawerOpen}>
-            <Toolbar>
+            <Toolbar
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                }}>
                 <IconButton
                     color='inherit'
                     aria-label='open drawer'
@@ -51,6 +56,9 @@ const TopNavBar: React.FC<TopNavBarProps> = ({
                     sx={{ mr: 2, ...(drawerOpen && { display: 'none' }) }}>
                     <MenuIcon />
                 </IconButton>
+                <Typography variant='h6' noWrap component='div'>
+                    QueryAll
+                </Typography>
                 <IconButton
                     color='inherit'
                     aria-label='open chat'
@@ -59,9 +67,6 @@ const TopNavBar: React.FC<TopNavBarProps> = ({
                     sx={{ mr: 2 }}>
                     {chatOpen ? <ChatOnIcon /> : <ChatOffIcon />}
                 </IconButton>
-                <Typography variant='h6' noWrap component='div'>
-                    QueryAll
-                </Typography>
             </Toolbar>
         </AppBar>
     );

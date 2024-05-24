@@ -57,7 +57,18 @@ export const createThread = async (dispatch: AppDispatch) => {
         const data = await handleResponse(response);
         console.log('Thread created: ', JSON.stringify(data));
         const { threadId } = data;
-        dispatch(addThread({ id: threadId, messages: [] }));
+        dispatch(
+            addThread({
+                id: threadId,
+                messages: [
+                    {
+                        sender: 'assistant',
+                        text: "Hello! I'm your SQL Assistant. How can I help you today?",
+                        timestamp: Date.now(),
+                    },
+                ],
+            }),
+        );
         dispatch(setCurrentThread(threadId));
     } catch (error) {
         console.error('Error creating thread:', error);

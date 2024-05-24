@@ -8,6 +8,6 @@ body,
     display: flex;
     flex-direction: column;
     height: 100%;
-    margin: 20px;
+    margin: '20 20 10 20';
     width: 100%;
 }

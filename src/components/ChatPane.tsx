@@ -9,10 +9,16 @@ import {
     List,
     ListItem,
     ListItemText,
+    Stack,
 } from '@mui/material';
+import { MuiMarkdown } from 'mui-markdown';
 import './ChatPane.css';
 
-const ChatPane: React.FC = () => {
+interface ChatPaneProps {
+    height: number;
+}
+
+const ChatPane: React.FC<ChatPaneProps> = ({ height }) => {
     const dispatch = useDispatch<AppDispatch>();
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const [input, setInput] = useState('');
@@ -30,8 +36,10 @@ const ChatPane: React.FC = () => {
             await createThread(dispatch);
         };
 
-        initializeChat();
-    }, [dispatch]);
+        if (!currentThread) {
+            initializeChat();
+        }
+    }, [currentThread, dispatch]);
 
     const handleSendMessage = async () => {
         if (input.trim() === '') return;
@@ -49,14 +57,22 @@ const ChatPane: React.FC = () => {
     return (
         <Box
             sx={{
+                height,
                 flex: 1,
                 display: 'flex',
                 flexDirection: 'column',
-                borderRight: 1,
                 borderColor: 'divider',
                 bgcolor: 'background.paper',
             }}>
-            <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 2 }}>
+            <Box
+                sx={{
+                    flexGrow: 1,
+                    overflowY: 'auto',
+                    p: 2,
+                    borderTop: 1,
+                    borderLeft: 1,
+                    borderColor: 'divider',
+                }}>
                 <List>
                     {messages.map((msg, index) =>
                         msg.sender === 'user' ? (
@@ -87,19 +103,20 @@ const ChatPane: React.FC = () => {
                                 sx={{
                                     justifyContent: 'flex-start',
                                 }}>
-                                <ListItemText
-                                    primary={msg.text}
-                                    primaryTypographyProps={{
-                                        align: 'left',
-                                    }}
+                                <Stack
+                                    direction='column'
+                                    spacing={1}
+                                    justifyContent='flex-start'
+                                    alignContent='flex-start'
                                     sx={{
-                                        maxWidth: '90%',
-                                        bgcolor: 'secondary.light',
+                                        marginRight: 10,
+                                        border: 3,
+                                        borderColor: 'divider',
                                         borderRadius: 2,
-                                        px: 2,
-                                        py: 1,
-                                    }}
-                                />
+                                        p: 2,
+                                    }}>
+                                    <MuiMarkdown>{msg.text}</MuiMarkdown>
+                                </Stack>
                             </ListItem>
                         ),
                     )}
