@@ -58,7 +58,7 @@ const TopNavBar: React.FC<TopNavBarProps> = ({
                     {drawerOpen ? <ChevronLeftIcon /> : <MenuIcon />}
                 </IconButton>
                 <Typography variant='h6' noWrap component='div'>
-                    QueryAll
+                    SQL for DynamoDB
                 </Typography>
                 <IconButton
                     color='inherit'

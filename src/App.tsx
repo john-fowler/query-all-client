@@ -169,7 +169,7 @@ const App: React.FC = () => {
             topPaneHeight: verticalPosition - 125,
             bottomPaneHeight: windowHeight - verticalPosition - 30,
             leftPaneWidth:
-                (chatOpen ? horizontalPosition - 65 : windowWidth - 90) -
+                (chatOpen ? horizontalPosition - 55 : windowWidth - 90) -
                 (drawerOpen ? drawerWidth : 0),
             rightPaneWidth: windowWidth - horizontalPosition - 52,
         };

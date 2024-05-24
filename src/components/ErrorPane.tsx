@@ -10,8 +10,16 @@ const ErrorPane: React.FC<ErrorPaneProps> = ({ error, height }) => {
     const theme = useTheme();
     return (
         <Paper
-            elevation={3}
-            style={{ padding: '10px', height, overflowY: 'auto' }}>
+            elevation={0}
+            style={{
+                padding: '10px',
+                height,
+                overflowY: 'auto',
+                border: 1,
+                borderStyle: 'solid',
+                borderColor: '#ccc',
+                borderRadius: 0,
+            }}>
             <Typography variant='h6' style={{ marginBottom: 20 }}>
                 SQL Error
             </Typography>

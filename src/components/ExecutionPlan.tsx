@@ -9,8 +9,16 @@ interface ExecutionPlanProps {
 const ExecutionPlan: React.FC<ExecutionPlanProps> = ({ plan, height }) => {
     return (
         <Paper
-            elevation={3}
-            style={{ padding: '10px', height, overflowY: 'auto' }}>
+            elevation={0}
+            style={{
+                padding: '10px',
+                height,
+                overflowY: 'auto',
+                border: 1,
+                borderStyle: 'solid',
+                borderColor: '#ccc',
+                borderRadius: 0,
+            }}>
             <Typography variant='h6'>Execution Plan</Typography>
             <Typography
                 style={{

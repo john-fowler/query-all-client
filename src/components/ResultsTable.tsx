@@ -72,7 +72,12 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
 }) => {
     const theme = useTheme();
     return (
-        <Paper elevation={3} style={{ padding: '0px', marginBottom: '0px' }}>
+        <Paper
+            elevation={0}
+            style={{
+                padding: '0px',
+                marginBottom: '0px',
+            }}>
             <Box className='table-container' style={{ height }}>
                 <TableContainer component={Paper} className='table-scroll'>
                     <Table stickyHeader size='small'>
@@ -113,7 +118,13 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <Box className='pagination-controls'>
+                <Box
+                    className='pagination-controls'
+                    style={{
+                        borderBottom: '1px solid #ccc',
+                        borderLeft: '1px solid #ccc',
+                        borderRight: '1px solid #ccc',
+                    }}>
                     <IconButton
                         onClick={handlePreviousPage}
                         disabled={currentPage === 0}>

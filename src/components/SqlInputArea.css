@@ -11,6 +11,7 @@
     padding: 10px;
     border: 1px solid #ccc;
     font-family: 'Courier New', Courier, monospace;
+    resize: none;
 }
 
 .buttons-dropdown-container {
