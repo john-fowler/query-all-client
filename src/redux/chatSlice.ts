@@ -2,6 +2,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export type MessageRole = 'system' | 'user' | 'assistant';
 
+export const INITIAL_ASSISTANT_MESSAGE =
+    "Hello! I'm your SQL Assistant. How can I help you today?";
+
 export interface Message {
     sender: MessageRole;
     text: string;
@@ -19,8 +22,19 @@ interface ChatState {
 }
 
 const initialState: ChatState = {
-    threads: {},
-    currentThread: null,
+    threads: {
+        placeholder: {
+            id: 'placeholder',
+            messages: [
+                {
+                    sender: 'assistant',
+                    text: INITIAL_ASSISTANT_MESSAGE,
+                    timestamp: Date.now(),
+                },
+            ],
+        },
+    },
+    currentThread: 'placeholder',
 };
 
 const chatSlice = createSlice({

@@ -6,6 +6,7 @@ import {
     addMessage,
     Message,
     appendAssistantChunk,
+    INITIAL_ASSISTANT_MESSAGE,
 } from '../redux/chatSlice';
 import socket from './socket'; // Import the socket instance
 import { API_BASE_URL } from './serviceTypes';
@@ -45,7 +46,7 @@ const handleResponse = async (response: Response) => {
 };
 
 // Create a Thread
-export const createThread = async (dispatch: AppDispatch) => {
+export const createThread = async (dispatch: AppDispatch): Promise<string> => {
     try {
         const response = await fetch(`${API_BASE_URL}/threads`, {
             method: 'POST',
@@ -63,39 +64,46 @@ export const createThread = async (dispatch: AppDispatch) => {
                 messages: [
                     {
                         sender: 'assistant',
-                        text: "Hello! I'm your SQL Assistant. How can I help you today?",
+                        text: INITIAL_ASSISTANT_MESSAGE,
                         timestamp: Date.now(),
                     },
                 ],
             }),
         );
         dispatch(setCurrentThread(threadId));
+        return threadId;
     } catch (error) {
         console.error('Error creating thread:', error);
     }
+    return 'placeholder';
 };
 
 // Send a Message
-export const sendMessage = (
+export const sendMessage = async (
     dispatch: AppDispatch,
     threadId: string,
     messageText: string,
 ) => {
+    let tid = threadId;
+    if (threadId === 'placeholder') {
+        tid = await createThread(dispatch);
+    }
+
     const message: Message = {
         sender: 'user',
         text: messageText,
         timestamp: Date.now(),
     };
-    dispatch(addMessage({ threadId, message }));
+    dispatch(addMessage({ threadId: tid, message }));
 
-    socket.emit('sendMessage', { content: messageText, threadId });
+    socket.emit('sendMessage', { content: messageText, threadId: tid });
 
     socket.on('receiveMessage', (data: MessageResponse) => {
         // console.log('Received message:', data);
         if (data.choices[0].delta.content) {
             dispatch(
                 appendAssistantChunk({
-                    threadId,
+                    threadId: tid,
                     content: data.choices[0].delta.content,
                 }),
             );

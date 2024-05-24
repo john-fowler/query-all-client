@@ -2,16 +2,16 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../redux/store';
-import { createThread, sendMessage } from '../service/openAiApi';
+import { sendMessage } from '../service/openAiApi';
 import { setSql } from '../redux/sqlSlice';
 import {
     Box,
     Button,
-    TextField,
     List,
     ListItem,
     ListItemText,
     Stack,
+    TextareaAutosize,
 } from '@mui/material';
 import './ChatPane.css';
 
@@ -31,18 +31,10 @@ const ChatPane: React.FC<ChatPaneProps> = ({ height }) => {
             state.chat.threads[currentThread!]?.messages || [],
     );
 
-    useEffect(() => {
-        // Initialize the assistant and thread on component mount
-        const initializeChat = async () => {
-            await createThread(dispatch);
-        };
-
-        if (!currentThread) {
-            initializeChat();
-        }
-    }, [currentThread, dispatch]);
-
-    const handleSendMessage = async () => {
+    const handleSendMessage = async (
+        e?: React.KeyboardEvent<HTMLTextAreaElement>,
+    ) => {
+        if (e) e.preventDefault();
         if (input.trim() === '') return;
 
         if (currentThread) {
@@ -109,8 +101,7 @@ const ChatPane: React.FC<ChatPaneProps> = ({ height }) => {
                     flexGrow: 1,
                     overflowY: 'auto',
                     p: 2,
-                    borderTop: 1,
-                    borderLeft: 1,
+                    border: 1,
                     borderColor: 'divider',
                 }}>
                 <List>
@@ -167,25 +158,34 @@ const ChatPane: React.FC<ChatPaneProps> = ({ height }) => {
             </Box>
             <Box
                 sx={{
-                    p: 2,
-                    borderTop: 1,
-                    borderColor: 'divider',
+                    py: 2,
                     display: 'flex',
                     alignItems: 'center',
                 }}>
-                <TextField
-                    fullWidth
-                    variant='outlined'
+                <TextareaAutosize
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    onKeyPress={(e) =>
+                        e.key === 'Enter' && handleSendMessage(e)
+                    }
                     placeholder='Type a message...'
-                    sx={{ mr: 2 }}
+                    style={{
+                        resize: 'none',
+                        padding: '10px',
+                        flexGrow: 1,
+                        marginRight: 10,
+                        borderRadius: 0,
+                        borderWidth: 1,
+                        borderStyle: 'solid',
+                        borderColor: '#ccc',
+                        fontFamily: 'inherit',
+                        fontSize: 'inherit',
+                    }}
                 />
                 <Button
                     variant='contained'
                     color='primary'
-                    onClick={handleSendMessage}>
+                    onClick={() => handleSendMessage()}>
                     Send
                 </Button>
             </Box>
