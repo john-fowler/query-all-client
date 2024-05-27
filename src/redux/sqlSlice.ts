@@ -10,7 +10,7 @@ interface SqlState {
 
 const initialState: SqlState = {
     sql: '',
-    maxRows: 100,
+    maxRows: parseInt(localStorage.getItem('maxRows') ?? '100', 10),
     resumeIdx: undefined,
     selectionStart: 0,
     selectionEnd: 0,
@@ -25,6 +25,7 @@ const sqlSlice = createSlice({
         },
         setMaxRows: (state, action: PayloadAction<number>) => {
             state.maxRows = action.payload;
+            localStorage.setItem('maxRows', action.payload.toString()); // Save to local storage
         },
         setResumeIdx: (state, action: PayloadAction<number | undefined>) => {
             state.resumeIdx = action.payload;

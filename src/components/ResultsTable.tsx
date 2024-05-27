@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React from 'react';
 import {
     Box,
@@ -110,7 +111,11 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
                                             // eslint-disable-next-line react/no-array-index-key
                                             key={cellIndex}
                                             className='table-cell'>
-                                            {cell}
+                                            {cell === null || cell === undefined
+                                                ? ''
+                                                : typeof cell === 'object'
+                                                  ? JSON.stringify(cell)
+                                                  : cell}
                                         </StyledTableCell>
                                     ))}
                                 </StyledTableRow>
