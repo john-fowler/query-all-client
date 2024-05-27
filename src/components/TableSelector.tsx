@@ -149,7 +149,7 @@ const TableSelector: React.FC<TableSelectorProps> = () => {
     useEffect(() => {
         const tab = tables.find((table) => table.name === expanded);
         if (tab) {
-            if (tab.columns.length === 0) {
+            if (tab.columns === undefined) {
                 try {
                     getTableDetails(tab.name).then((result) => {
                         dispatch(updateTable(result.data!));
@@ -204,7 +204,7 @@ const TableSelector: React.FC<TableSelectorProps> = () => {
                             </Stack>
                         </AccordionSummary>
                         <AccordionDetails>
-                            {table.columns.length > 0 ? (
+                            {table.columns !== undefined ? (
                                 <List>
                                     {table.primaryKey &&
                                         table.primaryKey.map((column) => (
