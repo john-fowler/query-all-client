@@ -10,7 +10,7 @@ import { executeSql } from './service/executeSql';
 import { fetchPlan } from './service/fetchPlan';
 import { useResizable } from 'react-resizable-layout';
 import ResizeBar from './components/ResizeBar';
-import { setResumeIdx } from './redux/sqlSlice';
+import { setExecuting, setResumeIdx } from './redux/sqlSlice';
 import {
     setError,
     setPlan,
@@ -107,8 +107,12 @@ const App: React.FC = () => {
         async (resIdx: number = 0) => {
             try {
                 dispatch(setPlan(''));
+                dispatch(setColumns([]));
+                dispatch(setData([]));
                 dispatch(setError(''));
+                dispatch(setExecuting(true));
                 const result = await executeSql(sql, maxRows, resIdx);
+                dispatch(setExecuting(false));
                 if (!result.success) {
                     handleError(
                         result.detailedError || result.error || 'Unknown error',
@@ -125,6 +129,7 @@ const App: React.FC = () => {
                 }
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: Error | any) {
+                dispatch(setExecuting(false));
                 // eslint-disable-next-line no-console
                 console.error('Error fetching plan:', err);
                 // eslint-disable-next-line no-alert

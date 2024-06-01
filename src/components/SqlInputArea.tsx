@@ -4,6 +4,7 @@ import { RootState, AppDispatch } from '../redux/store';
 import {
     Box,
     Button,
+    CircularProgress,
     FormControl,
     InputLabel,
     MenuItem,
@@ -14,6 +15,7 @@ import {
 } from '@mui/material';
 import { setSql, setSelection, setMaxRows } from '../redux/sqlSlice';
 import './SqlInputArea.css';
+import { cancelExecution } from '../service/executeSql';
 
 interface SqlInputAreaProps {
     handleGo: () => void;
@@ -27,7 +29,9 @@ const SqlInputArea: React.FC<SqlInputAreaProps> = ({
     const dispatch = useDispatch<AppDispatch>();
     const theme = useTheme();
     const inputRef = React.useRef(null);
-    const { sql, maxRows } = useSelector((state: RootState) => state.sql);
+    const { sql, maxRows, executing } = useSelector(
+        (state: RootState) => state.sql,
+    );
 
     const updateSelectionRange = useCallback(() => {
         if (inputRef.current !== null) {
@@ -55,6 +59,11 @@ const SqlInputArea: React.FC<SqlInputAreaProps> = ({
         },
         [dispatch],
     );
+
+    const handleCancel = useCallback(() => {
+        // eslint-disable-next-line no-console
+        cancelExecution();
+    }, []);
 
     useEffect(() => {
         const savedSql = localStorage.getItem('sql');
@@ -96,13 +105,30 @@ const SqlInputArea: React.FC<SqlInputAreaProps> = ({
             </Box>
             <Box className='buttons-dropdown-container'>
                 <Box className='buttons-container'>
-                    <Button
-                        variant='contained'
-                        color='primary'
-                        onClick={handleGo}
-                        className='button'>
-                        Go
-                    </Button>
+                    {executing ? (
+                        <Button
+                            variant='contained'
+                            color='secondary'
+                            onClick={handleCancel}
+                            className='button'>
+                            <CircularProgress
+                                size={24}
+                                sx={{
+                                    color: 'white',
+                                    marginRight: '8px',
+                                }}
+                            />
+                            Cancel
+                        </Button>
+                    ) : (
+                        <Button
+                            variant='contained'
+                            color='primary'
+                            onClick={handleGo}
+                            className='button'>
+                            Go
+                        </Button>
+                    )}
                     <Button
                         variant='outlined'
                         color='primary'

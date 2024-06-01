@@ -6,6 +6,7 @@ interface SqlState {
     resumeIdx: number | undefined;
     selectionStart: number;
     selectionEnd: number;
+    executing: boolean;
 }
 
 const initialState: SqlState = {
@@ -14,6 +15,7 @@ const initialState: SqlState = {
     resumeIdx: undefined,
     selectionStart: 0,
     selectionEnd: 0,
+    executing: false,
 };
 
 const sqlSlice = createSlice({
@@ -54,6 +56,9 @@ const sqlSlice = createSlice({
             state.selectionStart += token.length + (priorIsLetter ? 2 : 0);
             state.selectionEnd = state.selectionStart;
         },
+        setExecuting: (state, action: PayloadAction<boolean>) => {
+            state.executing = action.payload;
+        },
     },
 });
 
@@ -63,6 +68,7 @@ export const {
     setResumeIdx,
     setSelection,
     insertSqlToken,
+    setExecuting,
 } = sqlSlice.actions;
 
 export default sqlSlice.reducer;
