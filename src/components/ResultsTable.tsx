@@ -1,5 +1,6 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
     Box,
     IconButton,
@@ -19,19 +20,11 @@ import {
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import './ResultsTable.css';
 import { Row } from '../db-types';
+import { AppDispatch, RootState } from '../redux/store';
+import { execSql } from '../redux/actions';
+import { setResumeIdx } from '../redux/sqlSlice';
 
-interface ResultsTableProps {
-    columns: string[];
-    data: Row[];
-    currentPage: number;
-    firstRowIdx: number;
-    height: number;
-    planTime: number;
-    execTime: number;
-    hasNext: boolean;
-    handlePreviousPage: () => void;
-    handleNextPage: () => void;
-}
+interface ResultsTableProps {}
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -59,114 +52,113 @@ const TimingText = styled(Typography)(({ theme }) => ({
     fontSize: 'small',
 }));
 
-const ResultsTable: React.FC<ResultsTableProps> = ({
-    columns,
-    data,
-    currentPage,
-    firstRowIdx,
-    height,
-    planTime,
-    execTime,
-    hasNext,
-    handlePreviousPage,
-    handleNextPage,
-}) => {
+const ResultsTable: React.FC<ResultsTableProps> = () => {
     const theme = useTheme();
+    const dispatch = useDispatch<AppDispatch>();
+    const resumeIdx = useSelector((state: RootState) => state.sql.resumeIdx);
+    const maxRows = useSelector((state: RootState) => state.sql.maxRows);
+    const hasNext = useMemo(() => (resumeIdx ?? 0) > 0, [resumeIdx]);
+    const { columns, data, planTime, execTime, currentPage, firstRowIdx } =
+        useSelector((state: RootState) => state.results);
+
+    const handleNextPage = useCallback(() => {
+        dispatch(execSql(resumeIdx ?? 0));
+    }, [dispatch, resumeIdx]);
+
+    const handlePreviousPage = useCallback(() => {
+        const newResumeIdx = firstRowIdx - maxRows;
+        if (newResumeIdx >= 0) {
+            dispatch(execSql(newResumeIdx));
+            dispatch(setResumeIdx(newResumeIdx));
+        }
+    }, [firstRowIdx, maxRows, dispatch]);
+
     return (
-        <Paper
-            elevation={0}
-            style={{
-                padding: '0px',
-                marginBottom: '0px',
-            }}>
-            <Box className='table-container' style={{ height }}>
-                <TableContainer component={Paper} className='table-scroll'>
-                    <Table stickyHeader size='small'>
-                        <TableHead>
-                            <TableRow>
-                                <StyledTableCell />
-                                {columns.map((column, index) => (
+        <>
+            <TableContainer component={Paper} className='table-scroll'>
+                <Table stickyHeader size='small'>
+                    <TableHead>
+                        <TableRow>
+                            <StyledTableCell />
+                            {columns.map((column, index) => (
+                                <StyledTableCell
+                                    // eslint-disable-next-line react/no-array-index-key
+                                    key={index}
+                                    className='table-cell'>
+                                    {column}
+                                </StyledTableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {data.map((row: Row, rowIndex) => (
+                            // eslint-disable-next-line react/no-array-index-key
+                            <StyledTableRow key={rowIndex}>
+                                <StyledTableCell
+                                    className='table-cell'
+                                    sx={{
+                                        color: theme.palette.text.disabled,
+                                    }}>
+                                    {firstRowIdx + rowIndex + 1}
+                                </StyledTableCell>
+                                {row.map((cell, cellIndex) => (
                                     <StyledTableCell
                                         // eslint-disable-next-line react/no-array-index-key
-                                        key={index}
+                                        key={cellIndex}
                                         className='table-cell'>
-                                        {column}
+                                        {cell === null || cell === undefined
+                                            ? ''
+                                            : typeof cell === 'object'
+                                              ? JSON.stringify(cell)
+                                              : cell}
                                     </StyledTableCell>
                                 ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {data.map((row, rowIndex) => (
-                                // eslint-disable-next-line react/no-array-index-key
-                                <StyledTableRow key={rowIndex}>
-                                    <StyledTableCell
-                                        className='table-cell'
-                                        sx={{
-                                            color: theme.palette.text.disabled,
+                            </StyledTableRow>
+                        ))}
+                        {data.length === 0 && (
+                            <StyledTableRow>
+                                <StyledTableCell colSpan={columns.length + 1}>
+                                    <Typography
+                                        align='center'
+                                        className='no-results-text'
+                                        style={{
+                                            // display warning color
+                                            color: theme.palette.warning.main,
                                         }}>
-                                        {firstRowIdx + rowIndex + 1}
-                                    </StyledTableCell>
-                                    {row.map((cell, cellIndex) => (
-                                        <StyledTableCell
-                                            // eslint-disable-next-line react/no-array-index-key
-                                            key={cellIndex}
-                                            className='table-cell'>
-                                            {cell === null || cell === undefined
-                                                ? ''
-                                                : typeof cell === 'object'
-                                                  ? JSON.stringify(cell)
-                                                  : cell}
-                                        </StyledTableCell>
-                                    ))}
-                                </StyledTableRow>
-                            ))}
-                            {data.length === 0 && (
-                                <StyledTableRow>
-                                    <StyledTableCell
-                                        colSpan={columns.length + 1}>
-                                        <Typography
-                                            align='center'
-                                            className='no-results-text'
-                                            style={{
-                                                // display warning color
-                                                color: theme.palette.warning
-                                                    .main,
-                                            }}>
-                                            No results
-                                        </Typography>
-                                    </StyledTableCell>
-                                </StyledTableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <Box
-                    className='pagination-controls'
-                    style={{
-                        borderBottom: '1px solid #ccc',
-                        borderLeft: '1px solid #ccc',
-                        borderRight: '1px solid #ccc',
-                    }}>
-                    <IconButton
-                        onClick={handlePreviousPage}
-                        disabled={currentPage === 0}>
-                        <ArrowBack />
-                    </IconButton>
-                    <Stack direction='column' alignItems='center'>
-                        <Typography>
-                            {data.length > 0 &&
-                                `page ${currentPage + 1}: rows ${firstRowIdx + 1}-${firstRowIdx + data.length}`}
-                        </Typography>
-                        <TimingText>
-                            plan time: {planTime}ms / exec time: {execTime}ms
-                        </TimingText>
-                    </Stack>
-                    <IconButton onClick={handleNextPage} disabled={!hasNext}>
-                        <ArrowForward />
-                    </IconButton>
-                </Box>
+                                        No results
+                                    </Typography>
+                                </StyledTableCell>
+                            </StyledTableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <Box
+                className='pagination-controls'
+                style={{
+                    borderBottom: '1px solid #ccc',
+                    borderLeft: '1px solid #ccc',
+                    borderRight: '1px solid #ccc',
+                }}>
+                <IconButton
+                    onClick={handlePreviousPage}
+                    disabled={currentPage === 0}>
+                    <ArrowBack />
+                </IconButton>
+                <Stack direction='column' alignItems='center'>
+                    <Typography>
+                        {data.length > 0 &&
+                            `page ${currentPage + 1}: rows ${firstRowIdx + 1}-${firstRowIdx + data.length}`}
+                    </Typography>
+                    <TimingText>
+                        plan time: {planTime}ms / exec time: {execTime}ms
+                    </TimingText>
+                </Stack>
+                <IconButton onClick={handleNextPage} disabled={!hasNext}>
+                    <ArrowForward />
+                </IconButton>
             </Box>
-        </Paper>
+        </>
     );
 };
 
