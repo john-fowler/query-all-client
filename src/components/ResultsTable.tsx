@@ -22,7 +22,6 @@ import './ResultsTable.css';
 import { Row } from '../db-types';
 import { AppDispatch, RootState } from '../redux/store';
 import { execSql } from '../redux/actions';
-import { setResumeIdx } from '../redux/sqlSlice';
 
 interface ResultsTableProps {}
 
@@ -69,7 +68,6 @@ const ResultsTable: React.FC<ResultsTableProps> = () => {
         const newResumeIdx = firstRowIdx - maxRows;
         if (newResumeIdx >= 0) {
             dispatch(execSql(newResumeIdx));
-            dispatch(setResumeIdx(newResumeIdx));
         }
     }, [firstRowIdx, maxRows, dispatch]);
 

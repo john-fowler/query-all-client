@@ -72,6 +72,7 @@ export const execSql = createAsyncThunk(
             dispatch(setData([]));
             dispatch(setError(''));
             dispatch(setExecuting(true));
+            dispatch(setResumeIdx(resIdx)); // temporary
             const result = await executeSql(sql, maxRows, resIdx);
             dispatch(setExecuting(false));
             if (!result.success) {
