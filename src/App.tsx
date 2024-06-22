@@ -69,8 +69,9 @@ const App: React.FC = () => {
         separatorProps: horizontalSeparatorProps,
     } = useResizable({
         axis: 'x',
-        initial: window.innerWidth / 2,
-        min: 450,
+        initial: (2 * window.innerWidth) / 3,
+        min: Math.min(400, window.innerWidth - 450),
+        max: window.innerWidth - 450,
     });
 
     const handleError = useCallback(
