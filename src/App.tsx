@@ -29,6 +29,9 @@ import LeftSideDrawer, { drawerWidth } from './components/LeftSideDrawer';
 import ErrorPane from './components/ErrorPane';
 import { SqlPlanResponse, SqlResponse } from './service/serviceTypes';
 import ChatPane from './components/ChatPane';
+import { Row } from './db-types';
+
+const NO_ROWS: Row[] = [['no rows']];
 
 const App: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -120,7 +123,11 @@ const App: React.FC = () => {
                 } else {
                     const respData: SqlResponse = result.data!;
                     dispatch(setColumns(respData.columns));
-                    dispatch(setData(respData.data));
+                    dispatch(
+                        setData(
+                            respData.data.length > 0 ? respData.data : NO_ROWS,
+                        ),
+                    );
                     dispatch(setPlanTime(respData.planTime));
                     dispatch(setExecTime(respData.execTime));
                     dispatch(setFirstRowIdx(respData.firstRowIdx));
@@ -242,7 +249,7 @@ const App: React.FC = () => {
                                 {data.length > 0 && (
                                     <ResultsTable
                                         columns={columns}
-                                        data={data}
+                                        data={data === NO_ROWS ? [] : data}
                                         planTime={planTime}
                                         execTime={execTime}
                                         currentPage={currentPage}

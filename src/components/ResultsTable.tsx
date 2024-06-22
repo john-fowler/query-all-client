@@ -120,6 +120,23 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
                                     ))}
                                 </StyledTableRow>
                             ))}
+                            {data.length === 0 && (
+                                <StyledTableRow>
+                                    <StyledTableCell
+                                        colSpan={columns.length + 1}>
+                                        <Typography
+                                            align='center'
+                                            className='no-results-text'
+                                            style={{
+                                                // display warning color
+                                                color: theme.palette.warning
+                                                    .main,
+                                            }}>
+                                            No results
+                                        </Typography>
+                                    </StyledTableCell>
+                                </StyledTableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -137,8 +154,8 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
                     </IconButton>
                     <Stack direction='column' alignItems='center'>
                         <Typography>
-                            page {currentPage + 1}: rows {firstRowIdx + 1}-
-                            {firstRowIdx + data.length}
+                            {data.length > 0 &&
+                                `page ${currentPage + 1}: rows ${firstRowIdx + 1}-${firstRowIdx + data.length}`}
                         </Typography>
                         <TimingText>
                             plan time: {planTime}ms / exec time: {execTime}ms

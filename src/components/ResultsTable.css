@@ -16,7 +16,16 @@
 }
 
 .table-cell {
-    white-space: nowrap; /* Prevent text from wrapping */
+    white-space: nowrap;
+    /* Prevent text from wrapping */
     overflow: hidden;
-    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+    text-overflow: ellipsis;
+    /* Add ellipsis for overflowing text */
+}
+
+.no-results-text {
+    /* display red and italics */
+    text-align: center;
+    margin-top: 20px;
+    font-style: italic;
 }
