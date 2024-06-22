@@ -19,6 +19,16 @@ interface ChatPaneProps {
     height: number;
 }
 
+function prepCodeForDisplay(code: string): string {
+    //  The first line is the language identifier
+    const codeLines = code.split('\n');
+    const language = codeLines[0].replace('```', '');
+    if (['sql', 'python', 'javascript', 'typescript'].includes(language)) {
+        codeLines.shift();
+    }
+    return codeLines.join('\n').trim();
+}
+
 const ChatPane: React.FC<ChatPaneProps> = ({ height }) => {
     const dispatch = useDispatch<AppDispatch>();
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -65,20 +75,31 @@ const ChatPane: React.FC<ChatPaneProps> = ({ height }) => {
                 if (index % 2 === 0) {
                     return line.split('\n').map((l, i) => (
                         <p key={i} className='markdownText'>
-                            {l}
+                            {l.split('`').map((part, j) =>
+                                j % 2 === 0 ? (
+                                    part
+                                ) : (
+                                    <span
+                                        key={`${i}-${j}`}
+                                        className='inlineMarkdownCode'>
+                                        {part}
+                                    </span>
+                                ),
+                            )}
                         </p>
                     ));
                 }
+                const code = prepCodeForDisplay(line);
                 return (
                     <pre key={index} className='markdownCode'>
                         <Button
-                            onClick={() => handleUseSql(line.trim())}
+                            onClick={() => handleUseSql(code)}
                             className='useSqlBtn'
                             size='small'
                             variant='outlined'>
                             use
                         </Button>
-                        {line.trim()}
+                        {code}
                     </pre>
                 );
             });
