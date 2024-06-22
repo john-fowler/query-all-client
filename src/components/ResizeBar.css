@@ -10,6 +10,7 @@
 .sample-drag-bar.sample-drag-bar--dragging,
 .sample-drag-bar:hover {
     background-color: #63b3ed;
+    user-select: none;
 }
 
 .sample-drag-bar.sample-drag-bar--horizontal {
