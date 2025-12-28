@@ -1,46 +1,57 @@
-# Getting Started with Create React App
+# Query All Client
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Query All Client is a React + Redux web UI for running SQL-style queries against DynamoDB through a backend API. It provides a SQL editor, execution plans, result browsing, and a table catalog to help build queries. An optional chat assistant can stream responses and insert SQL into the editor.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- SQL editor with Go, Plan, and Cancel actions.
+- Execution plan viewer.
+- Results table with pagination and timing details.
+- Table catalog drawer with search, primary key hints, and SQL token insertion.
+- Chat assistant with streaming responses and a Use action for SQL snippets.
 
-### `npm start`
+## Tech stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- React 18 (Create React App)
+- Redux Toolkit
+- Material UI
+- socket.io client
+- react-resizable-layout
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Requirements
 
-### `npm test`
+- Node.js and npm
+- Backend API at `http://localhost:8080/v1`
+- Socket.io server at `http://localhost:8080`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+If your backend runs elsewhere, update `src/service/serviceTypes.ts` and `src/service/socket.ts`.
 
-### `npm run build`
+## Running locally
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm install
+npm start
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Project structure
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- `src/App.tsx` defines the main layout and pane wiring.
+- `src/components` contains UI components for the editor, results, catalog, and chat.
+- `src/redux` contains slices and async actions for SQL, results, catalog, and chat state.
+- `src/service` contains API and socket clients.
+- `docs` contains agent-friendly documentation for the project.
 
-### `npm run eject`
+## Scripts
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- `npm start` runs the dev server
+- `npm run build` creates a production build
+- `npm test` runs tests
+- `npm run lint` runs ESLint
+- `npm run lint:fix` fixes lint issues
+- `npm run format` formats source files
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Docs for LLM agents
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- `docs/PROJECT_OVERVIEW.md`
+- `docs/ARCHITECTURE.md`
+- `docs/DATA_FLOW.md`
